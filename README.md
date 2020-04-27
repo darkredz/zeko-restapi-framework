@@ -14,14 +14,14 @@
 </p>
 
 Zeko Rest API Framework is a asynchronous web framework written for Kotlin language. 
-Create restful APIs in Kotlin easily with automatic Swagger/OpenAPI documentation generation
-It is built on top of [Vert.x event-driven toolkit](https://vertx.io) and designed to be simple and fun to use. 
+Create restful APIs in Kotlin easily with automatic Swagger/OpenAPI documentation generation.
+It is built on top of [Vert.x event-driven toolkit](https://vertx.io) and designed to be simple & fun to use. 
 
 This library is open source and available under the Apache 2.0 license. Please leave a star if you've found this library helpful!
 
 ## Features
 - No configuration files, no XML, no YAML, lightweight, easy to use
-- Event driven & non blocking built on top of [Vert.x](https://vertx.io)
+- Event driven & non-blocking built on top of [Vert.x](https://vertx.io)
 - Fast startup & performance
 - Automatic Swagger/OpenAPI documentation generation for your RESTful API
 - Supports Kotlin coroutines
