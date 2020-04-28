@@ -36,7 +36,7 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
@@ -87,7 +87,7 @@ Set your kotlin.version accordingly for the KAPT to work.
                         <annotationProcessorPath>
                             <groupId>io.zeko</groupId>
                             <artifactId>zeko-restapi</artifactId>
-                            <version>1.0.2</version>
+                            <version>1.0.3</version>
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
     
