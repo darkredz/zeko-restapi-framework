@@ -28,7 +28,9 @@ This library is open source and available under the Apache 2.0 license. Please l
 - Run cron jobs easily!
  
 ## Getting Started
-This framework is very easy-to-use. After reading this short documentation, you will have learnt enough.
+This framework is very easy-to-use. After reading this short documentation(Still in progress), you will have learnt enough.
+
+Or look at the [example project](https://github.com/darkredz/zeko-restapi-examples) straight away! It's simple enough
 
 ## Installation
 Add this to your maven pom.xml
