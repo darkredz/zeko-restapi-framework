@@ -38,11 +38,11 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
         }
     }
 
-    override suspend fun send(toEmail: String, name: String, subject: String, content: String, text: String?, tags: List<String>?): MailResponse {
-        return send(listOf(toEmail), listOf(name), subject, content, text, tags)
+    override suspend fun send(toEmail: String, name: String, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
+        return send(listOf(toEmail), listOf(name), subject, html, text, tags)
     }
 
-    override suspend fun send(toList: List<String>, subject: String, content: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(toList: List<String>, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
         val toEmail = arrayListOf<String>()
         val names = arrayListOf<String>()
         toList.forEach {
@@ -57,14 +57,14 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
                 names.add("")
             }
         }
-        return send(toEmail, names, subject, content, text, tags)
+        return send(toEmail, names, subject, html, text, tags)
     }
 
-    override suspend fun send(toEmail: List<String>, names: List<String>, subject: String, content: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(toEmail: List<String>, names: List<String>, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
         val postData = mapOf(
                 "key" to config.apiKey,
                 "message" to mutableMapOf(
-                        "html" to content,
+                        "html" to html,
                         "subject" to subject,
                         "from_email" to config.fromEmail,
                         "from_name" to config.fromName
@@ -153,10 +153,10 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
     override suspend fun sendInCircuit(
             breaker: CircuitBreaker, toEmail: String,
             name: String, subject: String,
-            content: String, text: String?, tags: List<String>?
+            html: String, text: String?, tags: List<String>?
     ): MailResponse {
         return breaker.executeSuspendAwait {
-            val res = send(toEmail, name, subject, content, text, tags)
+            val res = send(toEmail, name, subject, html, text, tags)
             if (!res.success) {
                 throw Exception(res.body)
             }
