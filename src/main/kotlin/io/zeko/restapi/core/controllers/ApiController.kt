@@ -73,8 +73,12 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
         if (errors.size == 0 && values.size == 0) {
             type = 0
         }
-
-        return ValidateResult(type == 1, type, errors, values)
+        var success = type == 1
+        //if all params are optional, and nothing is pass in. should be success
+        if (!success && errors.keys.isEmpty()) {
+            success = true
+        }
+        return ValidateResult(success, type, errors, values)
     }
 
     protected open fun validateInput(statusCode: Int = 400): ValidateResult {
