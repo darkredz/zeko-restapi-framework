@@ -36,6 +36,29 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.2</version>
+    </dependency>
+    <!-- Jasync Mysql driver if needed -->
+    <dependency>
+       <groupId>com.github.jasync-sql</groupId>
+       <artifactId>jasync-mysql</artifactId>
+       <version>1.0.17</version>
+    </dependency>
+    <!-- Hikari Mysql connection pool if needed -->
+    <dependency>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>3.4.3</version>
+    </dependency>
+    <!-- Vertx jdbc client if needed -->
+    <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-jdbc-client</artifactId>
+        <version>${vertx.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jetbrains.kotlinx</groupId>
+        <artifactId>kotlinx-coroutines-core</artifactId>
+        <version>1.3.3</version>
     </dependency>
     
