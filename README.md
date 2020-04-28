@@ -36,7 +36,7 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.5</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
@@ -101,7 +101,7 @@ Set your kotlin.version accordingly for the KAPT to work.
                         <processorArg>swagger.description=This is a simple RESTful API demo</processorArg>
                         <processorArg>swagger.host=localhost</processorArg>
                         <processorArg>swagger.basePath=/</processorArg>
-                        <processorArg>swagger.sampleResultDir=/Users/leng/Documents/zeko-restapi-example/api-doc</processorArg>
+                        <processorArg>swagger.sampleResultDir=/Users/leng/Documents/zeko-restapi-example/api-results</processorArg>
                         <processorArg>swagger.outputFile=/Users/leng/Documents/zeko-restapi-example/api-doc/swagger.json</processorArg>
                         <processorArg>swagger.cmpSchemaDir=/Users/leng/Documents/zeko-restapi-example/api-schemas</processorArg>
                         <processorArg>default.produces=application/json</processorArg>
@@ -130,4 +130,4 @@ You should see the following output during compilation, after you have created a
 [INFO] Note: Writing cron class /Users/leng/Documents/zeko-restapi-example/target/generated-sources/kaptKotlin/compile/GeneratedCrons.kt
 [INFO] 
 ```
-Now you can view the swagger.json under the directory you have configured in any Swagger/OpenAPI UI tools or Postman
+Now you can view the swagger.json under the directory configured (swagger.outputFile) in any Swagger/OpenAPI UI tools or Postman
