@@ -30,7 +30,7 @@ This library is open source and available under the Apache 2.0 license. Please l
 ## Getting Started
 This framework is very easy-to-use. After reading this short documentation, you will have learnt enough.
 
-## Download
+## Installation
 Add this to your maven pom.xml
 
     <dependency>
@@ -62,3 +62,72 @@ Add this to your maven pom.xml
         <version>1.3.3</version>
     </dependency>
     
+#### Enable annotation processing
+In order to get your zeko app up and running, you would need to add annotation preprocessor to your maven pom.
+This will automatically generates routes, cron and Swagger 2.0/OpenAPI documentation from your controllers.
+Set your kotlin.version accordingly for the KAPT to work. 
+
+    <plugin>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <version>${kotlin.version}</version>
+    
+        <executions>
+            <execution>
+                <id>kapt</id>
+                <goals>
+                    <goal>kapt</goal>
+                </goals>
+                <configuration>
+                    <sourceDirs>
+                        <sourceDir>src/main/kotlin</sourceDir>
+                    </sourceDirs>
+    
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>io.zeko</groupId>
+                            <artifactId>zeko-restapi</artifactId>
+                            <version>1.0.2</version>
+                        </annotationProcessorPath>
+                    </annotationProcessorPaths>
+    
+                    <annotationProcessors>
+                        <annotationProcessor>io.zeko.restapi.annotation.codegen.RouteSchemaGenerator</annotationProcessor>
+                    </annotationProcessors>
+    
+                    <annotationProcessorArgs>
+                        <processorArg>swagger.apiVersion=1.0</processorArg>
+                        <processorArg>swagger.title=Simple Rest API</processorArg>
+                        <processorArg>swagger.description=This is a simple RESTful API demo</processorArg>
+                        <processorArg>swagger.host=localhost</processorArg>
+                        <processorArg>swagger.basePath=/</processorArg>
+                        <processorArg>swagger.sampleResultDir=/Users/leng/Documents/zeko-restapi-example/api-doc</processorArg>
+                        <processorArg>swagger.outputFile=/Users/leng/Documents/zeko-restapi-example/api-doc/swagger.json</processorArg>
+                        <processorArg>swagger.cmpSchemaDir=/Users/leng/Documents/zeko-restapi-example/api-doc/api-schemas</processorArg>
+                        <processorArg>default.produces=application/json</processorArg>
+                        <processorArg>default.consumes=application/x-www-form-urlencoded</processorArg>
+                    </annotationProcessorArgs>
+                </configuration>
+            </execution>
+            
+            //.... other execution ...
+        </executions>
+    </plugin>
+
+#### Compile & run your app
+Compile and run your vertx app:
+```
+mvn clean compile vertx:run -Dvertx.verticle="io.zeko.restapi.examples.BootstrapVerticle"
+```
+You should see the following output during compilation, after you have created and annotated your endpoints in controller classes
+```
+[INFO] --- vertx-maven-plugin:1.0.18:initialize (vmp) @ simple-api ---
+[INFO] 
+[INFO] --- kotlin-maven-plugin:1.3.61:kapt (kapt) @ simple-api ---
+[INFO] Note: Writing controller schema /Users/leng/Documentszeko-restapi-example/target/generated-sources/kaptKotlin/compile/UserControllerSchema.kt
+[INFO] Note: Writing route class /Users/leng/Documents/zeko-restapi-example/target/generated-sources/kaptKotlin/compile/GeneratedRoutes.kt
+[INFO] Note: Writing swagger file to /Users/leng/Documents/zeko-restapi-example/api-doc/swagger.json
+[INFO] Note: Writing cron class /Users/leng/Documents/zeko-restapi-example/target/generated-sources/kaptKotlin/compile/GeneratedCrons.kt
+[INFO] 
+```
+Now you can view the swagger.json under the directory you have configured in any Swagger/OpenAPI UI tools or Postman
