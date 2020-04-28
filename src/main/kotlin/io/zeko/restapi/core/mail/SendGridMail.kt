@@ -2,17 +2,15 @@ package io.zeko.restapi.core.mail
 
 import io.vertx.circuitbreaker.CircuitBreaker
 import io.vertx.circuitbreaker.CircuitBreakerOptions
-import io.vertx.core.Promise
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.Logger
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
-import io.vertx.kotlin.circuitbreaker.executeAwait
 import io.vertx.kotlin.ext.web.client.sendJsonAwait
+import io.zeko.restapi.core.CircuitBreakerBuilder
 import io.zeko.restapi.core.utilities.executeSuspendAwait
-import io.zeko.restapi.core.utilities.makeCircuitBreaker
 import kotlinx.coroutines.*
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
@@ -37,7 +35,7 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
         }
 
         fun createCircuitBreaker(vertx: Vertx, name: String = "zeko.mail.sendgrid", options: CircuitBreakerOptions? = null): CircuitBreaker {
-            return makeCircuitBreaker(vertx, name, options)
+            return CircuitBreakerBuilder.make(vertx, name, options)
         }
     }
 

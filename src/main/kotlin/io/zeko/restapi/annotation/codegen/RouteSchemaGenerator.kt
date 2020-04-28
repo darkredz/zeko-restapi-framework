@@ -151,22 +151,22 @@ class RouteSchemaGenerator : AbstractProcessor() {
     private fun generateCronClasses(definitions: List<CronDefinition>) {
         val fileName = "GeneratedCrons"
         var codeJobs = ""
+        val qt = "\"" + "\"" + "\""
 
         for (def in definitions) {
             val (className, methodName, schedule, coroutine, pack) = def
             lateinit var job: String
-
             if (coroutine) {
                 job = """
                 runner.runSuspend("$schedule") {
-                    logger.debug("Running coroutine cronjob $className::$methodName")
+                    logger.debug(${qt}Running coroutine cron $className::$methodName${qt})
                     $className(vertx, logger).$methodName() 
                 }
             """.trimIndent()
             } else {
                 job = """
                 runner.run("$schedule") {
-                    logger.debug("Running cronjob $className::$methodName")
+                    logger.debug(${qt}Running cron $className::$methodName${qt})
                     $className(vertx, logger).$methodName() 
                 }
             """.trimIndent()
