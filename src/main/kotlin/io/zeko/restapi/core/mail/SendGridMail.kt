@@ -62,10 +62,7 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
     }
 
     override suspend fun send(toEmail: List<String>, names: List<String>, subject: String, content: String, text: String?, tags: List<String>?): MailResponse {
-        val content = arrayListOf(mapOf(
-                "type" to "text/html",
-                "value" to content
-        ))
+        val content = arrayListOf<Map<String, Any>>()
 
         if (!text.isNullOrEmpty()) {
             content.add(mapOf(
@@ -73,6 +70,11 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
                     "value" to text
             ))
         }
+
+        content.add(mapOf(
+                "type" to "text/html",
+                "value" to content
+        ))
 
         val toList = arrayListOf<Map<String, String?>>()
 
