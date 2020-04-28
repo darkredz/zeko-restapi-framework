@@ -103,7 +103,7 @@ Set your kotlin.version accordingly for the KAPT to work.
                         <processorArg>swagger.basePath=/</processorArg>
                         <processorArg>swagger.sampleResultDir=/Users/leng/Documents/zeko-restapi-example/api-doc</processorArg>
                         <processorArg>swagger.outputFile=/Users/leng/Documents/zeko-restapi-example/api-doc/swagger.json</processorArg>
-                        <processorArg>swagger.cmpSchemaDir=/Users/leng/Documents/zeko-restapi-example/api-doc/api-schemas</processorArg>
+                        <processorArg>swagger.cmpSchemaDir=/Users/leng/Documents/zeko-restapi-example/api-schemas</processorArg>
                         <processorArg>default.produces=application/json</processorArg>
                         <processorArg>default.consumes=application/x-www-form-urlencoded</processorArg>
                     </annotationProcessorArgs>
