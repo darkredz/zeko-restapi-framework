@@ -30,7 +30,7 @@ This library is open source and available under the Apache 2.0 license. Please l
 - Run cron jobs easily!
 - Mail service with Sendgrid & Mandrill
 - Simple SQL builder & data mapper
-- Built with Java 8, works fine with Java 9/10 and above
+- Built with JVM 8, works fine with JVM 9/10 and above
  
 ## Getting Started
 This framework is very easy-to-use. After reading this short documentation, you will have learnt enough.
