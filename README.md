@@ -13,7 +13,7 @@
     </a>
 </p>
 
-Zeko Rest API Framework is a asynchronous web framework written for Kotlin language. 
+Zeko Rest API Framework is an asynchronous web framework written for Kotlin language. 
 Create restful APIs in Kotlin easily with automatic Swagger/OpenAPI documentation generation.
 It is built on top of [Vert.x event-driven toolkit](https://vertx.io) and designed to be simple & fun to use. 
 
