@@ -30,7 +30,7 @@ This library is open source and available under the Apache 2.0 license. Please l
 - Run cron jobs easily!
 - Mail service with Sendgrid & Mandrill
 - Simple SQL builder & data mapper
-- Built with Java 8, works fine with Java 9/10 and above
+- Built with JVM 8, works fine with JVM 9/10 and above
  
 ## Getting Started
 This framework is very easy-to-use. After reading this short documentation, you will have learnt enough.
@@ -145,7 +145,7 @@ Zeko doesn't include a DI container, instead of reinventing the wheel, it is rec
 or [Dagger](https://github.com/google/dagger) to manage your project's dependency injection. The following instructions will be using Koin DI framework.
 
 Bootstrapping for Zeko rest framework is simple. If you would like to use the built-in SQL builder & client, you could follow the same structure as the 
-(example project)[https://github.com/darkredz/zeko-restapi-examples/tree/master/src/main/kotlin/io/zeko/restapi/examples]
+[example project](https://github.com/darkredz/zeko-restapi-examples/tree/master/src/main/kotlin/io/zeko/restapi/examples)
 
 ```
 BootstrapVerticle.kt
