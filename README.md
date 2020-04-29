@@ -94,7 +94,7 @@ Set your kotlin.version accordingly for the KAPT to work.
                         <annotationProcessorPath>
                             <groupId>io.zeko</groupId>
                             <artifactId>zeko-restapi</artifactId>
-                            <version>1.0.3</version>
+                            <version>1.0.5</version>
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
     
