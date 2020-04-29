@@ -145,7 +145,7 @@ Zeko doesn't include a DI container, instead of reinventing the wheel, it is rec
 or [Dagger](https://github.com/google/dagger) to manage your project's dependency injection. The following instructions will be using Koin DI framework.
 
 Bootstrapping for Zeko rest framework is simple. If you would like to use the built-in SQL builder & client, you could follow the same structure as the 
-(example project)[https://github.com/darkredz/zeko-restapi-examples/tree/master/src/main/kotlin/io/zeko/restapi/examples]
+[example project](https://github.com/darkredz/zeko-restapi-examples/tree/master/src/main/kotlin/io/zeko/restapi/examples)
 
 ```
 BootstrapVerticle.kt
