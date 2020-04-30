@@ -27,7 +27,8 @@ This library is open source and available under the Apache 2.0 license. Please l
 - Automatic Swagger/OpenAPI doc generation for your RESTful API
 - Code generation via Kotlin kapt
 - Largely reflection-free, consumes little memory
-- Project creator included
+- [Project creator](https://github.com/darkredz/zeko-restapi-examples#project-creator) included
+- Add endpoint validations easily
 - Run cron jobs easily!
 - Mail service with Sendgrid & Mandrill
 - Simple SQL builder & data mapper
