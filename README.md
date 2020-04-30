@@ -27,6 +27,7 @@ This library is open source and available under the Apache 2.0 license. Please l
 - Automatic Swagger/OpenAPI doc generation for your RESTful API
 - Code generation via Kotlin kapt
 - Largely reflection-free, consumes little memory
+- Project creator included
 - Run cron jobs easily!
 - Mail service with Sendgrid & Mandrill
 - Simple SQL builder & data mapper
@@ -35,7 +36,9 @@ This library is open source and available under the Apache 2.0 license. Please l
 ## Getting Started
 This framework is very easy-to-use. After reading this short documentation, you will have learnt enough.
 
-Or look at the [example project](https://github.com/darkredz/zeko-restapi-examples) straight away! It's simple enough
+Or look at the [example project](https://github.com/darkredz/zeko-restapi-examples) straight away! It's simple enough!
+
+The example project includes a project creator tool which is the quickest way to create a new project (accessible at /project/create endpoint)
 
 ## Installation
 Add this to your maven pom.xml
@@ -43,7 +46,7 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.0.6</version>
+      <version>1.0.7</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
@@ -94,7 +97,7 @@ Set your kotlin.version accordingly for the KAPT to work.
                         <annotationProcessorPath>
                             <groupId>io.zeko</groupId>
                             <artifactId>zeko-restapi</artifactId>
-                            <version>1.0.6</version>
+                            <version>1.0.7</version>
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
     
