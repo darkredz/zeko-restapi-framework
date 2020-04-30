@@ -5,8 +5,11 @@ package io.zeko.restapi.core.utilities.zip
 
 import io.vertx.core.*
 import io.vertx.core.buffer.Buffer
+import io.vertx.core.http.HttpHeaders
 import io.vertx.core.logging.LoggerFactory
+import io.vertx.core.streams.Pump
 import io.vertx.core.streams.ReadStream
+import io.vertx.ext.web.RoutingContext
 import java.io.IOException
 import java.io.InputStream
 import java.io.PipedInputStream
@@ -299,6 +302,34 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
          * CLOSED state.
          */
         const val STATUS_CLOSED = 2
+
+        fun downloadZip(vertx: Vertx, context: RoutingContext, zipName: String, files: List<TempFile>) {
+            val fileEntries = object : FileEntryIterator {
+                private var index = 0
+                override fun remove() {}
+                override fun hasNext(): Boolean = index < files.size
+
+                override fun next(): FileEntry? = if (hasNext()) {
+                    GeneratedFileEntry(files[index].name, files[index++].content)
+                } else {
+                    throw NoSuchElementException()
+                }
+            }
+
+            val zip = ZipGenerator(vertx, fileEntries)
+
+            zip.endHandler {
+                context.response().end()
+            }.exceptionHandler { err ->
+                throw err
+            }
+
+            context.response()
+                    .putHeader(HttpHeaders.CONTENT_TYPE, "application/zip, application/octet-stream")
+                    .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$zipName.zip\"")
+
+            Pump.pump(zip, context.response().setChunked(true)).start()
+        }
     }
 
     /**
