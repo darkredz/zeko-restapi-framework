@@ -47,7 +47,7 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.0.8</version>
+      <version>1.0.9</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
