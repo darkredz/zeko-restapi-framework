@@ -135,8 +135,9 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
     override fun end(value: Any?) {
         if (value != null) {
             context.response().end(value.toString())
+        } else {
+            context.response().end("null")
         }
-        context.response().end("null")
     }
 
     override fun endJson(value: Any?, statusCode: Int) {
