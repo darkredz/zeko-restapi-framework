@@ -14,7 +14,7 @@ open class ProjectInitController(vertx: Vertx, logger: Logger, context: RoutingC
 
     /**
      * Visit this url to generate and download a new project setup automatically by the framework. JDBC url should be uri encoded
-     * http://localhost:9999/init/create?artifact_id=trade-game&group_id=com.mycorp.superapp&version=1.0.0
+     * http://localhost:9999/project/create?artifact_id=trade-game&group_id=com.mycorp.superapp&version=1.0.0
      * &package_name=com.mycorp.superapp.trade&http_port=8888
      * &jwt_key=YourKey&jwt_refresh_key=YourKey&jwt_expiry=604800&jwt_refresh_expiry=1209600&jwt_refresh_when_expire=false
      * &controllers=user,stock,game_admin,game_manager
@@ -76,7 +76,7 @@ class DB {
     constructor(vertx: Vertx, logger: Logger) {
         this.vertx = vertx
 
-        val mysqlConfig = json {
+        val dbConfig = json {
             obj(
                     "url" to "$dbUrl",
                     "max_pool_size" to 30
@@ -84,7 +84,7 @@ class DB {
         }
 
         dbLogger = AppDBLog(logger)
-        connPool = ${dbDriver}DBPool(mysqlConfig)
+        connPool = ${dbDriver}DBPool(dbConfig)
     }
 
     suspend fun session(): DBSession = ${dbDriver}DBSession(connPool, connPool.createConnection()).setQueryLogger(dbLogger)
@@ -372,7 +372,7 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
     <properties>
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
         <kotlin.version>1.3.61</kotlin.version>
-        <zeko-restapi.version>1.1.0</zeko-restapi.version>
+        <zeko-restapi.version>1.1.1</zeko-restapi.version>
         <vertx.version>3.9.0</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
         <java.version>1.8</java.version>
