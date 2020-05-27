@@ -112,9 +112,9 @@ Set your kotlin.version accordingly for the KAPT to work.
                         <processorArg>swagger.description=This is a simple RESTful API demo</processorArg>
                         <processorArg>swagger.host=localhost</processorArg>
                         <processorArg>swagger.basePath=/</processorArg>
-                        <processorArg>swagger.sampleResultDir=/Users/leng/Documents/zeko-restapi-example/api-results</processorArg>
-                        <processorArg>swagger.outputFile=/Users/leng/Documents/zeko-restapi-example/api-doc/swagger.json</processorArg>
-                        <processorArg>swagger.cmpSchemaDir=/Users/leng/Documents/zeko-restapi-example/api-schemas</processorArg>
+                        <processorArg>swagger.sampleResultDir=${project.basedir}/api-results</processorArg>
+                        <processorArg>swagger.outputFile=${project.basedir}/api-doc/swagger.json</processorArg>
+                        <processorArg>swagger.cmpSchemaDir=${project.basedir}/api-schemas</processorArg>
                         <processorArg>default.produces=application/json</processorArg>
                         <processorArg>default.consumes=application/x-www-form-urlencoded</processorArg>
                     </annotationProcessorArgs>
