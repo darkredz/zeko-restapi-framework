@@ -106,28 +106,44 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
         }
     }
 
-    fun handleRuntimeError(router: Router, logger: Logger, errorMessage: String = "Internal Server Error", errorLogPrefix: String = "RUNTIME_ERROR") {
-        router.route().failureHandler { failureRoutingContext ->
-            val statusCode = if (failureRoutingContext.statusCode() > 0) failureRoutingContext.statusCode() else 500
-            var response = failureRoutingContext.response()
-
-            if (statusCode == 503) {
-                response.setStatusCode(503).end("Service Unavailable")
-                return@failureHandler
-            }
-
-            val err = failureRoutingContext.failure()
+    fun handleRuntimeError(router: Router, logger: Logger, asJson: Boolean = false, errorMessage: String = "Internal Server Error", errorLogPrefix: String = "RUNTIME_ERROR") {
+        router.route().failureHandler {
+            val statusCode = if (it.statusCode() > 0) it.statusCode() else 500
+            var response = it.response()
+            val path = it.normalisedPath()
+            val err = it.failure()
 
             if (err != null) {
                 val sw = StringWriter()
                 err.printStackTrace(PrintWriter(sw))
+                val errMsgStack = sw.toString()
 
-                logger.error("$errorLogPrefix $path ${err.message}")
-                logger.error(sw.toString())
+                if (!asJson) {
+                    logger.error("$errorLogPrefix $statusCode $path  ${err.message}")
+                    logger.error(errMsgStack)
+                } else {
+                    val logMsg = generateAccessLogBody(it)
+                    logMsg.put("error", true)
+                    logMsg.put("error_msg", err.toString())
+                    logMsg.put("error_stack", errMsgStack)
+                    logger.error(logMsg.encode())
+                }
+            } else {
+                if (statusCode == 503) {
+                    response.setStatusCode(503).end("Service Unavailable")
+                    if (!asJson) {
+                        logger.error("SERVICE_UNAVAILABLE 503 $path")
+                    } else {
+                        val logMsg = generateAccessLogBody(it)
+                        logMsg.put("error", true)
+                        logMsg.put("error_msg", "Service Unavailable")
+                        logger.error(logMsg.encode())
+                    }
+                }
             }
 
             // Status code will be 500 for the RuntimeException
-            response.setStatusCode(500).end(errorMessage)
+            response.setStatusCode(statusCode).end(errorMessage)
         }
     }
 
