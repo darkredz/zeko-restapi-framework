@@ -32,53 +32,7 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
     override fun inputErrorMessages() = ValidationError.defaultMessages
 
     protected open fun checkInputErrors(rules: Map<String, Any>): ValidateResult {
-        val note = Notification("__", inputErrorMessages())
-        val values = HashMap<String, Any?>()
-        val errors = HashMap<String, List<String>>()
-
-        for ((fieldName, ruleDetail) in rules) {
-            var rule = mapOf<String, List<Any>>()
-
-            when (ruleDetail) {
-                is String -> rule = Validator.parseRules(ruleDetail) as Map<String, List<Any>>
-                is Map<*, *> -> rule = ruleDetail as Map<String, List<Any>>
-            }
-
-            val checked = params.validate(fieldName, rule, note)
-            val errorList = note.getMessages(fieldName);
-            // logger.debug("$fieldName ${checked.rules} $errorList")
-
-            if (errorList == null) {
-                val isOptional = !checked.rules.contains("required")
-                if (isOptional && !params!!.containsKey(fieldName)) {
-                    //optional field is not set (null)
-                } else {
-                    if (checked.rules.contains("isInteger")) {
-                        values[fieldName] = Integer.parseInt(params!![fieldName])
-                    } else if (checked.rules.contains("isLong")) {
-                        values[fieldName] = Long.parseLong(params!![fieldName])
-                    } else if (checked.rules.contains("isFloat")) {
-                        values[fieldName] = Float.parseFloat(params!![fieldName])
-                    } else if (checked.rules.contains("isDouble")) {
-                        values[fieldName] = Double.parseDouble(params!![fieldName])
-                    } else {
-                        values[fieldName] = params!![fieldName]
-                    }
-                }
-            } else {
-                errors[fieldName] = errorList
-            }
-        }
-        var type = if (errors.size > 0) -1 else 1
-        if (errors.size == 0 && values.size == 0) {
-            type = 0
-        }
-        var success = type == 1
-        //if all params are optional, and nothing is pass in. should be success
-        if (!success && errors.keys.isEmpty()) {
-            success = true
-        }
-        return ValidateResult(success, type, errors, values)
+        return checkInputErrors(this.params, rules, this.inputErrorMessages())
     }
 
     protected open fun validateInput(statusCode: Int = 400): ValidateResult {
@@ -162,5 +116,58 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
 
     override fun errorJson(errors: Map<String, List<String>>, statusCode: Int, errorCode: Int) {
         context.errorJson(errors, statusCode, errorCode)
+    }
+
+    companion object {
+        @JvmStatic
+        fun checkInputErrors(params: Map<String, String>?, rules: Map<String, Any>, inputErrorMessages: Map<String, String>): ValidateResult {
+            val note = Notification("__", inputErrorMessages)
+            val values = HashMap<String, Any?>()
+            val errors = HashMap<String, List<String>>()
+
+            for ((fieldName, ruleDetail) in rules) {
+                var rule = mapOf<String, List<Any>>()
+
+                when (ruleDetail) {
+                    is String -> rule = Validator.parseRules(ruleDetail) as Map<String, List<Any>>
+                    is Map<*, *> -> rule = ruleDetail as Map<String, List<Any>>
+                }
+
+                val checked = params.validate(fieldName, rule, note)
+                val errorList = note.getMessages(fieldName);
+                // logger.debug("$fieldName ${checked.rules} $errorList")
+
+                if (errorList == null) {
+                    val isOptional = !checked.rules.contains("required")
+                    if (isOptional && !params!!.containsKey(fieldName)) {
+                        //optional field is not set (null)
+                    } else {
+                        if (checked.rules.contains("isInteger")) {
+                            values[fieldName] = Integer.parseInt(params!![fieldName])
+                        } else if (checked.rules.contains("isLong")) {
+                            values[fieldName] = Long.parseLong(params!![fieldName])
+                        } else if (checked.rules.contains("isFloat")) {
+                            values[fieldName] = Float.parseFloat(params!![fieldName])
+                        } else if (checked.rules.contains("isDouble")) {
+                            values[fieldName] = Double.parseDouble(params!![fieldName])
+                        } else {
+                            values[fieldName] = params!![fieldName]
+                        }
+                    }
+                } else {
+                    errors[fieldName] = errorList
+                }
+            }
+            var type = if (errors.size > 0) -1 else 1
+            if (errors.size == 0 && values.size == 0) {
+                type = 0
+            }
+            var success = type == 1
+            //if all params are optional, and nothing is pass in. should be success
+            if (!success && errors.keys.isEmpty()) {
+                success = true
+            }
+            return ValidateResult(success, type, errors, values)
+        }
     }
 }
