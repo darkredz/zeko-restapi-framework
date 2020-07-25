@@ -47,13 +47,13 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.1.3</version>
+      <version>1.1.5</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
        <groupId>com.github.jasync-sql</groupId>
        <artifactId>jasync-mysql</artifactId>
-       <version>1.0.17</version>
+       <version>1.1.3</version>
     </dependency>
     <!-- Hikari Mysql connection pool if needed -->
     <dependency>
@@ -65,7 +65,7 @@ Add this to your maven pom.xml
     <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-jdbc-client</artifactId>
-        <version>3.9.0</version>
+        <version>3.9.2</version>
     </dependency>
     <dependency>
         <groupId>org.jetbrains.kotlinx</groupId>
@@ -98,7 +98,7 @@ Set your kotlin.version accordingly for the KAPT to work.
                         <annotationProcessorPath>
                             <groupId>io.zeko</groupId>
                             <artifactId>zeko-restapi</artifactId>
-                            <version>1.0.7</version>
+                            <version>1.1.5</version>
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
     
