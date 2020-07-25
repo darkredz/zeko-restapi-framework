@@ -6,6 +6,7 @@ import java.util.regex.Pattern
 
 class SwaggerUtils {
     companion object {
+        @JvmStatic
         val vertxUriParamPattern: Pattern
                 get() {
                     val paths = JsonObject()
@@ -15,8 +16,10 @@ class SwaggerUtils {
                     return uriParamPattern
                 }
 
+        @JvmStatic
         fun convertToSwaggerUri(path: String, pattern: Pattern) = path.replace(pattern.toRegex(), "\\{\$1\\}")
 
+        @JvmStatic
         fun paramsFromVertxUri(path: String, uriParamPattern: Pattern): MutableList<String> {
             //get vertx uri param names :paramName to a list
             val matcher = uriParamPattern.matcher(path)
@@ -28,12 +31,14 @@ class SwaggerUtils {
             return uriParam
         }
 
+        @JvmStatic
         fun stripFileExt(str: String): String {
             val pos = str.lastIndexOf(".")
             // If there wasn't any '.' just return the string as is.
             return if (pos == -1) str else str.substring(0, pos)
         }
 
+        @JvmStatic
         fun checkFieldType(rule: Map<String, List<Any>>): String {
             var fieldType = "string"
             if (rule.containsKey("isInteger") || rule.containsKey("isLong")) {
@@ -46,6 +51,7 @@ class SwaggerUtils {
             return fieldType
         }
 
+        @JvmStatic
         fun addFieldFormat(fieldSchema: JsonObject, fieldType: String, rule: Map<String, List<Any>>) {
             if (fieldType == "integer") {
                 fieldSchema.put("format", if (rule.containsKey("isLong")) "int64" else "int32")

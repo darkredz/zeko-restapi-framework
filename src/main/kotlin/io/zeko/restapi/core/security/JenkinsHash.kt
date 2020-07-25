@@ -227,6 +227,8 @@ class JenkinsHash {
     companion object {
         // max value to limit it to 4 bytes
         private const val MAX_VALUE = 0xFFFFFFFFL
+
+        @JvmStatic
         fun getHash(str: String): Long {
             val jenkinsHash = JenkinsHash()
             return jenkinsHash.hash(str.toByteArray())
