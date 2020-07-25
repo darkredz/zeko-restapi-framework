@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger: Logger, val sendEndpoint: String = "/v3/mail/send") : MailService {
 
     companion object {
+        @JvmStatic
         fun createSharedClient(vertx: Vertx, options: WebClientOptions? = null): WebClient {
             if (options != null)
                 return WebClient.create(vertx, options)
@@ -34,6 +35,7 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
             )
         }
 
+        @JvmStatic
         fun createCircuitBreaker(vertx: Vertx, name: String = "zeko.mail.sendgrid", options: CircuitBreakerOptions? = null): CircuitBreaker {
             return CircuitBreakerBuilder.make(vertx, name, options)
         }

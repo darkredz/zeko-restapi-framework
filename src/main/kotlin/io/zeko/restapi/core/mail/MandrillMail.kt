@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit
 class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger: Logger, val sendEndpoint: String = "/api/1.0/messages/send.json") : MailService {
 
     companion object {
+        @JvmStatic
         fun createSharedClient(vertx: Vertx, options: WebClientOptions? = null): WebClient {
             if (options != null)
                 return WebClient.create(vertx, options)
@@ -33,6 +34,7 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
             )
         }
 
+        @JvmStatic
         fun createCircuitBreaker(vertx: Vertx, name: String = "zeko.mail.mandrill", options: CircuitBreakerOptions? = null): CircuitBreaker {
             return CircuitBreakerBuilder.make(vertx, name, options)
         }

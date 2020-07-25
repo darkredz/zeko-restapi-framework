@@ -2,6 +2,7 @@ package io.zeko.restapi.core.validations
 
 class ValidationError {
     companion object {
+        @JvmStatic
         val defaultMessages = mapOf(
             "required" to "__ is required",
             "regex" to "__ did not match any valid format",

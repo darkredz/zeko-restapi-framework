@@ -303,6 +303,7 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
          */
         const val STATUS_CLOSED = 2
 
+        @JvmStatic
         fun downloadZip(vertx: Vertx, context: RoutingContext, zipName: String, files: List<TempFile>) {
             val fileEntries = object : FileEntryIterator {
                 private var index = 0

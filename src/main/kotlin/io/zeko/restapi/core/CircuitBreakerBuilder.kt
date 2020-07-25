@@ -7,6 +7,7 @@ import io.vertx.core.Vertx
 
 class CircuitBreakerBuilder {
     companion object {
+        @JvmStatic
         fun make(vertx: Vertx, name: String, options: CircuitBreakerOptions? = null, retryPolicy: ((Int) -> Long)? = null): CircuitBreaker {
             var opt = options
             if (options == null) {
@@ -25,6 +26,7 @@ class CircuitBreakerBuilder {
             return CircuitBreaker.create(name, vertx, opt).retryPolicy(policy)
         }
 
+        @JvmStatic
         fun makeWithUnlimitedRetries(vertx: Vertx, name: String, delayMs: Long = 5000L, maxFailCount: Int = 10): CircuitBreaker {
             val options = CircuitBreakerOptions().apply {
                 maxFailures = maxFailCount
