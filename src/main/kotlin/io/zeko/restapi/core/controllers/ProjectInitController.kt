@@ -372,7 +372,7 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
     <properties>
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
         <kotlin.version>1.3.61</kotlin.version>
-        <zeko-restapi.version>1.1.5</zeko-restapi.version>
+        <zeko-restapi.version>1.1.6</zeko-restapi.version>
         <vertx.version>3.9.2</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
         <java.version>1.8</java.version>
