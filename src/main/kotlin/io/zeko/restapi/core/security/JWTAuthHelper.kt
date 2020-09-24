@@ -1,12 +1,13 @@
 package io.zeko.restapi.core.security
 
+import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.User
 import io.vertx.ext.auth.jwt.JWTAuth
+import io.vertx.ext.auth.jwt.JWTAuthOptions
 import io.vertx.ext.jwt.JWTOptions
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
-import io.vertx.kotlin.ext.auth.authenticateAwait
 
 open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?) {
     val expireMsg = json {
@@ -118,5 +119,10 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?) {
                 "access_token" to token,
                 "refresh_token" to refreshToken
         )
+    }
+
+    companion object {
+        @JvmStatic
+        fun createJWTAuth(vertx: Vertx, jwtOptions: JWTAuthOptions) = JWTAuth.create(vertx, jwtOptions)
     }
 }
