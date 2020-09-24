@@ -10,7 +10,8 @@ import io.zeko.restapi.core.utilities.endJson
 open class JWTAuthHandler(
         protected val jwtAuth: JWTAuth,
         protected val skipAuth: List<String>,
-        protected val continueAfterFail: Boolean = false
+        protected val continueAfterFail: Boolean = false,
+        protected val statusFail: Int = 401
 ) : Handler<RoutingContext> {
 
     override fun handle(ctx: RoutingContext) {
@@ -26,8 +27,7 @@ open class JWTAuthHandler(
                         ctx.put("tokenStatus", result)
                         ctx.next()
                     } else {
-                        ctx.response().setStatusCode(401)
-                        ctx.endJson(result)
+                        ctx.endJson(result, statusFail)
                     }
                 } else {
                     ctx.setUser(user)
