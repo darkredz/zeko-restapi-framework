@@ -15,10 +15,12 @@ open class JWTAuthHandler(
 ) : Handler<RoutingContext> {
 
     override fun handle(ctx: RoutingContext) {
+        var skip = false
         if (this.skipAuth != null) {
             val path = ctx.normalisedPath()
 
             if (this.skipAuth.contains(path)) {
+                skip = true
                 ctx.next()
             } else {
                 val matchList = skipAuth.filter { it.indexOf("*") > 1 }
@@ -30,13 +32,16 @@ open class JWTAuthHandler(
                             parts[1].isNullOrEmpty() && path.indexOf(parts[0]) === 0 ||
                             (!parts[1].isNullOrEmpty() && path.indexOf(parts[0]) === 0 && path.indexOf(parts[1]) === path.length - parts[1].length)
                         ) {
+                            skip = true
                             ctx.next()
                             break
                         }
                     }
                 }
             }
-        } else {
+        }
+
+        if (!skip) {
             var authHeader = ctx.request().getHeader(HttpHeaders.AUTHORIZATION.toString())
             val helper = JWTAuthHelper(jwtAuth, null)
 
