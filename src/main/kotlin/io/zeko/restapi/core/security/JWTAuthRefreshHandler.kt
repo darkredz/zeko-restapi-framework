@@ -11,7 +11,8 @@ open class JWTAuthRefreshHandler(
     protected val jwtAuthRefresh: JWTAuth,
     protected val tokenExpireSeconds: Int = 259200,
     protected val refreshExpireSeconds: Int = 604800,
-    protected val refreshAfterExpired: Boolean = false
+    protected val refreshAfterExpired: Boolean = false,
+    protected val useCamelCase: Boolean = false
 ) : Handler<RoutingContext> {
 
     override fun handle(ctx: RoutingContext) {
@@ -23,7 +24,8 @@ open class JWTAuthRefreshHandler(
             accessToken = "invalid"
         }
 
-        var refreshToken = ctx.request().params().get("refresh_token") + ""
+        val refreskTokenKey = if (useCamelCase) "refreshToken" else "refresh_token"
+        var refreshToken = ctx.request().params().get(refreskTokenKey) + ""
         val helper = JWTAuthHelper(jwtAuth, jwtAuthRefresh)
 
         helper.refreshToken(

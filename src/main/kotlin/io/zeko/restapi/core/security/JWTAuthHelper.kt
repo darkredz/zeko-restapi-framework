@@ -111,14 +111,25 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?) {
     fun generateAuthTokens(
         jwtAuthData: JsonObject,
         tokenExpireSeconds: Int = 259200,
-        refreshExpireSeconds: Int = 604800
+        refreshExpireSeconds: Int = 604800,
+        useCamelCase: Boolean = false
     ): Map<String, String> {
         val token = jwtAuth.generateToken(jwtAuthData, JWTOptions().setExpiresInSeconds(tokenExpireSeconds)) + ""
 
-        val refreshData = jwtAuthData.copy().put("for_token", token)
+        val refreshData = if (useCamelCase) {
+            jwtAuthData.copy().put("forToken", token)
+        } else {
+            jwtAuthData.copy().put("for_token", token)
+        }
         val refreshToken =
             jwtAuthRefresh?.generateToken(refreshData, JWTOptions().setExpiresInSeconds(refreshExpireSeconds)) + ""
 
+        if (useCamelCase) {
+            return mapOf(
+                "accessToken" to token,
+                "refreshToken" to refreshToken
+            )
+        }
         return mapOf(
             "access_token" to token,
             "refresh_token" to refreshToken
