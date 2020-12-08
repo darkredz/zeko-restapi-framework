@@ -15,7 +15,12 @@ import kotlinx.coroutines.*
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger: Logger, val sendEndpoint: String = "/v3/mail/send") : MailService {
+class SendGridMail(
+    val webClient: WebClient,
+    val config: MailConfig,
+    val logger: Logger,
+    val sendEndpoint: String = "/v3/mail/send"
+) : MailService {
 
     companion object {
         @JvmStatic
@@ -23,7 +28,8 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
             if (options != null)
                 return WebClient.create(vertx, options)
 
-            return WebClient.create(vertx, WebClientOptions()
+            return WebClient.create(
+                vertx, WebClientOptions()
                     .setMaxPoolSize(15)
                     .setDefaultHost("api.sendgrid.com")
                     .setSsl(true)
@@ -36,16 +42,33 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
         }
 
         @JvmStatic
-        fun createCircuitBreaker(vertx: Vertx, name: String = "zeko.mail.sendgrid", options: CircuitBreakerOptions? = null): CircuitBreaker {
+        fun createCircuitBreaker(
+            vertx: Vertx,
+            name: String = "zeko.mail.sendgrid",
+            options: CircuitBreakerOptions? = null
+        ): CircuitBreaker {
             return CircuitBreakerBuilder.make(vertx, name, options)
         }
     }
 
-    override suspend fun send(toEmail: String, name: String, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(
+        toEmail: String,
+        name: String,
+        subject: String,
+        html: String,
+        text: String?,
+        tags: List<String>?
+    ): MailResponse {
         return send(listOf(toEmail), listOf(name), subject, html, text, tags)
     }
 
-    override suspend fun send(toList: List<String>, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(
+        toList: List<String>,
+        subject: String,
+        html: String,
+        text: String?,
+        tags: List<String>?
+    ): MailResponse {
         val toEmail = arrayListOf<String>()
         val names = arrayListOf<String>()
         toList.forEach {
@@ -63,20 +86,31 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
         return send(toEmail, names, subject, html, text, tags)
     }
 
-    override suspend fun send(toEmail: List<String>, names: List<String>, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(
+        toEmail: List<String>,
+        names: List<String>,
+        subject: String,
+        html: String,
+        text: String?,
+        tags: List<String>?
+    ): MailResponse {
         val content = arrayListOf<Map<String, String>>()
 
         if (!text.isNullOrEmpty()) {
-            content.add(mapOf(
+            content.add(
+                mapOf(
                     "type" to "text/plain",
                     "value" to text
-            ))
+                )
+            )
         }
 
-        content.add(mapOf(
+        content.add(
+            mapOf(
                 "type" to "text/html",
                 "value" to html
-        ))
+            )
+        )
 
         val toList = arrayListOf<Map<String, String?>>()
 
@@ -91,16 +125,16 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
         }
 
         val postData = mapOf(
-                "personalizations" to listOf(
-                        mapOf("to" to toList, "subject" to subject)
-                ),
-                "from" to mapOf("email" to config.fromEmail, "name" to config.fromName),
-                "content" to content
+            "personalizations" to listOf(
+                mapOf("to" to toList, "subject" to subject)
+            ),
+            "from" to mapOf("email" to config.fromEmail, "name" to config.fromName),
+            "content" to content
         )
 
         val res = webClient.post(sendEndpoint)
-                .putHeader(HttpHeaders.AUTHORIZATION.toString(), "Bearer ${config.apiKey}")
-                .sendJsonAwait(JsonObject(postData))
+            .putHeader(HttpHeaders.AUTHORIZATION.toString(), "Bearer ${config.apiKey}")
+            .sendJsonAwait(JsonObject(postData))
         val status = res.statusCode()
         val tagStr = if (tags.isNullOrEmpty()) "" else tags.joinToString(",")
 
@@ -147,9 +181,9 @@ class SendGridMail(val webClient: WebClient, val config: MailConfig, val logger:
     }
 
     override suspend fun sendInCircuit(
-            breaker: CircuitBreaker, toEmail: String,
-            name: String, subject: String,
-            html: String, text: String?, tags: List<String>?
+        breaker: CircuitBreaker, toEmail: String,
+        name: String, subject: String,
+        html: String, text: String?, tags: List<String>?
     ): MailResponse {
         return breaker.executeSuspendAwait {
             val res = send(toEmail, name, subject, html, text, tags)

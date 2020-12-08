@@ -10,7 +10,8 @@ import io.zeko.db.sql.utilities.toSnakeCase
 import io.zeko.restapi.core.utilities.downloadZip
 import io.zeko.restapi.core.utilities.zip.TempFile
 
-open class ProjectInitController(vertx: Vertx, logger: Logger, context: RoutingContext) : ApiController(vertx, logger, context) {
+open class ProjectInitController(vertx: Vertx, logger: Logger, context: RoutingContext) :
+    ApiController(vertx, logger, context) {
 
     /**
      * Visit this url to generate and download a new project setup automatically by the framework. JDBC url should be uri encoded
@@ -21,21 +22,23 @@ open class ProjectInitController(vertx: Vertx, logger: Logger, context: RoutingC
      * &db_driver=hikari&jdbc_url=jdbc%3Amysql%3A%2F%2Flocalhost%3A3306%2Fzeko_test%3Fuser%3Droot%26password%3D123456
      */
     @Routing("/create", "route", true, "Create New Zeko Project")
-    @Params([
-        "artifact_id => required, minLength;3, maxLength;60, alphaNumDash",
-        "group_id => required, minLength;3, maxLength;60, [a-zA-Z0-9\\\\_\\\\.]",
-        "version => required, minLength;3, maxLength;10, regex;[0-9\\\\.]+",
-        "package_name => required, minLength;3, maxLength;60, regex;[a-zA-Z0-9\\\\_\\\\.]+",
-        "jwt_key => required",
-        "jwt_refresh_key => required",
-        "jwt_expiry => required, min;60;",
-        "jwt_refresh_expiry => required, min;60;",
-        "jwt_refresh_when_expire => required, isBoolean",
-        "db_driver => required, inArray;jasync;hikari;vertx",
-        "jdbc_url => required, minLength;16, maxLength;160",
-        "controllers => required, separateBy",
-        "http_port => required, isInteger, min;80, max:20000"
-    ])
+    @Params(
+        [
+            "artifact_id => required, minLength;3, maxLength;60, alphaNumDash",
+            "group_id => required, minLength;3, maxLength;60, [a-zA-Z0-9\\\\_\\\\.]",
+            "version => required, minLength;3, maxLength;10, regex;[0-9\\\\.]+",
+            "package_name => required, minLength;3, maxLength;60, regex;[a-zA-Z0-9\\\\_\\\\.]+",
+            "jwt_key => required",
+            "jwt_refresh_key => required",
+            "jwt_expiry => required, min;60;",
+            "jwt_refresh_expiry => required, min;60;",
+            "jwt_refresh_when_expire => required, isBoolean",
+            "db_driver => required, inArray;jasync;hikari;vertx",
+            "jdbc_url => required, minLength;16, maxLength;160",
+            "controllers => required, separateBy",
+            "http_port => required, isInteger, min;80, max:20000"
+        ]
+    )
     open suspend fun createNew(ctx: RoutingContext) {
         val res = validateInput()
         if (!res.success) return

@@ -326,8 +326,8 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
             }
 
             context.response()
-                    .putHeader(HttpHeaders.CONTENT_TYPE, "application/zip, application/octet-stream")
-                    .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$zipName.zip\"")
+                .putHeader(HttpHeaders.CONTENT_TYPE, "application/zip, application/octet-stream")
+                .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$zipName.zip\"")
 
             Pump.pump(zip, context.response().setChunked(true)).start()
         }

@@ -1,6 +1,6 @@
 package io.zeko.restapi.annotation.codegen
 
-class RoutingAnnotation (map: Map<String, Any?>) {
+class RoutingAnnotation(map: Map<String, Any?>) {
     protected val defaultMap = map.withDefault { null }
     val path: String? by defaultMap
     val method: String? by defaultMap

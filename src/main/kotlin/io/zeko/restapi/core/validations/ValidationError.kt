@@ -60,8 +60,6 @@ class ValidationError {
             "isUInteger" to "__ is not a valid unsigned integer value",
             "isDouble" to "__ is not a valid double value",
             "isFloat" to "__ is not a valid float value",
-            "isDouble" to "__ is not a valid double value",
-            "isDouble" to "__ is not a valid double value",
             "isBoolean" to "__ is not true or false",
             "inArray" to "__ must be one of these values: %s",
             "notInArray" to "__ must not be one of these values: %s",

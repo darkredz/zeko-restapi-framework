@@ -3,7 +3,11 @@ package io.zeko.restapi.core
 import io.vertx.core.Handler
 import io.vertx.ext.web.RoutingContext
 
-class TimeoutHandler(private val timeout: Long, private val errorCode: Int, private val skipPaths: List<String>? = null) : Handler<RoutingContext> {
+class TimeoutHandler(
+    private val timeout: Long,
+    private val errorCode: Int,
+    private val skipPaths: List<String>? = null
+) : Handler<RoutingContext> {
     override fun handle(ctx: RoutingContext) {
         var shouldSkip = false
 
@@ -11,7 +15,7 @@ class TimeoutHandler(private val timeout: Long, private val errorCode: Int, priv
             val path = ctx.normalisedPath()
             for (uri in skipPaths) {
                 if (uri.contains("*")) {
-                    if (path.startsWith(uri.removeSuffix("*")))    {
+                    if (path.startsWith(uri.removeSuffix("*"))) {
                         shouldSkip = true
                         break
                     }

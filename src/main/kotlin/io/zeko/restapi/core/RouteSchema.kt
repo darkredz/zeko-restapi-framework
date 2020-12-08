@@ -9,8 +9,9 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class RouteSchema(val vertx: Vertx) {
     open fun handleRoutes(
-            router: Router,
-            logger: Logger,
-            koto: (route: Route, fn: suspend (rc: RoutingContext, cc: CoroutineContext) -> Unit) -> Unit
-    ) {}
+        router: Router,
+        logger: Logger,
+        koto: (route: Route, fn: suspend (rc: RoutingContext, cc: CoroutineContext) -> Unit) -> Unit
+    ) {
+    }
 }

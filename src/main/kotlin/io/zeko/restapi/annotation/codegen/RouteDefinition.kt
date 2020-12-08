@@ -1,6 +1,6 @@
 package io.zeko.restapi.annotation.codegen
 
-data class RouteDefinition (
+data class RouteDefinition(
     val className: String,
     val methodName: String,
     val routePath: String,
