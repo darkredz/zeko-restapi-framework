@@ -1,6 +1,6 @@
 package io.zeko.restapi.core.validations
 
-data class ValidateResult (
+data class ValidateResult(
     val success: Boolean,
     val type: Int,
     val errors: Map<String, List<String>>,

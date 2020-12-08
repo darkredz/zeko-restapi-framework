@@ -21,8 +21,8 @@ fun RoutingContext.endJson(value: Any?, statusCode: Int = 200) {
         else -> output = Json.encode(value)
     }
     this.response().setStatusCode(statusCode)
-            .putHeader("Content-Type", "application/json")
-            .end(output)
+        .putHeader("Content-Type", "application/json")
+        .end(output)
 }
 
 fun RoutingContext.errorJson(vararg errors: Pair<String, List<String>>) {
@@ -43,13 +43,13 @@ fun RoutingContext.errorJson(errors: Map<String, List<String>>, code: Int = 422)
 
 fun RoutingContext.errorJson(errors: Map<String, List<String>>, statusCode: Int = 422, errorCode: Int = 422) {
     this.response().setStatusCode(statusCode)
-            .putHeader("Content-Type", "application/json")
-            .end(json {
-                obj(
-                        "error_code" to errorCode,
-                        "errors" to JsonObject(errors)
-                )
-            }.encode())
+        .putHeader("Content-Type", "application/json")
+        .end(json {
+            obj(
+                "error_code" to errorCode,
+                "errors" to JsonObject(errors)
+            )
+        }.encode())
 }
 
 fun RoutingContext.downloadZip(vertx: Vertx, zipName: String, files: List<TempFile>) {

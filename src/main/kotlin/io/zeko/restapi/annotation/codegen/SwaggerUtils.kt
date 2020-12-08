@@ -8,13 +8,13 @@ class SwaggerUtils {
     companion object {
         @JvmStatic
         val vertxUriParamPattern: Pattern
-                get() {
-                    val paths = JsonObject()
-                    val rgxStr = "\\:([a-zA-Z_0-9]+)"
-                    val rgx = Regex(rgxStr)
-                    val uriParamPattern = rgx.toPattern()
-                    return uriParamPattern
-                }
+            get() {
+                val paths = JsonObject()
+                val rgxStr = "\\:([a-zA-Z_0-9]+)"
+                val rgx = Regex(rgxStr)
+                val uriParamPattern = rgx.toPattern()
+                return uriParamPattern
+            }
 
         @JvmStatic
         fun convertToSwaggerUri(path: String, pattern: Pattern) = path.replace(pattern.toRegex(), "\\{\$1\\}")
@@ -89,13 +89,13 @@ class SwaggerUtils {
                 fieldSchema.put("format", "alphaNumDashSpace")
             } else if (rule.containsKey("alphaNumUnderscore")) {
                 fieldSchema.put("format", "alphaNumUnderscore")
-            }  else if (rule.containsKey("alphaNumQuoteDashSpace")) {
+            } else if (rule.containsKey("alphaNumQuoteDashSpace")) {
                 fieldSchema.put("format", "alphaNumQuoteDashSpace")
-            }  else if (rule.containsKey("alphaNumQuoteSpace")) {
+            } else if (rule.containsKey("alphaNumQuoteSpace")) {
                 fieldSchema.put("format", "alphaNumQuoteSpace")
-            }  else if (rule.containsKey("alphaQuoteDashSpace")) {
+            } else if (rule.containsKey("alphaQuoteDashSpace")) {
                 fieldSchema.put("format", "alphaQuoteDashSpace")
-            }  else if (rule.containsKey("alphaQuoteSpace")) {
+            } else if (rule.containsKey("alphaQuoteSpace")) {
                 fieldSchema.put("format", "alphaQuoteSpace")
             } else if (rule.containsKey("allLowerCase")) {
                 fieldSchema.put("format", "allLowerCase")

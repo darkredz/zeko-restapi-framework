@@ -50,7 +50,11 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
         return validateInput(rules[action]!!, statusCode)
     }
 
-    protected open fun validateInput(rules: Map<String, Any>?, statusCode: Int = 400, errorCode: Int = 400): ValidateResult {
+    protected open fun validateInput(
+        rules: Map<String, Any>?,
+        statusCode: Int = 400,
+        errorCode: Int = 400
+    ): ValidateResult {
         if (rules.isNullOrEmpty()) {
             return outputNoRulesError(statusCode, errorCode)
         }
@@ -65,13 +69,13 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
     protected open fun outputNoRulesError(statusCode: Int, errorCode: Int): ValidateResult {
         val values = HashMap<String, Any?>()
         val errors = mapOf(
-                "server_error" to listOf("Undefined input rules for this endpoint")
+            "server_error" to listOf("Undefined input rules for this endpoint")
         )
         val validateResult = ValidateResult(false, -1, errors, values)
         val res = json {
             obj(
-                    "error_code" to errorCode,
-                    "errors" to validateResult.errors
+                "error_code" to errorCode,
+                "errors" to validateResult.errors
             )
         }
         context.response().setStatusCode(405).putHeader("Content-Type", "application/json").end(res.toString())
@@ -120,7 +124,11 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
 
     companion object {
         @JvmStatic
-        fun checkInputErrors(params: Map<String, String>?, rules: Map<String, Any>, inputErrorMessages: Map<String, String>): ValidateResult {
+        fun checkInputErrors(
+            params: Map<String, String>?,
+            rules: Map<String, Any>,
+            inputErrorMessages: Map<String, String>
+        ): ValidateResult {
             val note = Notification("__", inputErrorMessages)
             val values = HashMap<String, Any?>()
             val errors = HashMap<String, List<String>>()

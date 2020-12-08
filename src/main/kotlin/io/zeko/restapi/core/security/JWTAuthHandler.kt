@@ -8,16 +8,40 @@ import io.zeko.restapi.core.security.JWTAuthHelper
 import io.zeko.restapi.core.utilities.endJson
 
 open class JWTAuthHandler(
-        protected val jwtAuth: JWTAuth,
-        protected val skipAuth: List<String>,
-        protected val continueAfterFail: Boolean = false,
-        protected val statusFail: Int = 401
+    protected val jwtAuth: JWTAuth,
+    protected val skipAuth: List<String>,
+    protected val continueAfterFail: Boolean = false,
+    protected val statusFail: Int = 401
 ) : Handler<RoutingContext> {
 
     override fun handle(ctx: RoutingContext) {
-        if (this.skipAuth != null && this.skipAuth.contains(ctx.normalisedPath())) {
-            ctx.next()
-        } else {
+        var skip = false
+        if (this.skipAuth != null) {
+            val path = ctx.normalisedPath()
+
+            if (this.skipAuth.contains(path)) {
+                skip = true
+                ctx.next()
+            } else {
+                val matchList = skipAuth.filter { it.indexOf("*") > 1 }
+
+                for (urlToMatch in matchList) {
+                    val parts = urlToMatch.split("*")
+                    if (parts.size == 2) {
+                        if (
+                            parts[1].isNullOrEmpty() && path.indexOf(parts[0]) === 0 ||
+                            (!parts[1].isNullOrEmpty() && path.indexOf(parts[0]) === 0 && path.indexOf(parts[1]) === path.length - parts[1].length)
+                        ) {
+                            skip = true
+                            ctx.next()
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!skip) {
             var authHeader = ctx.request().getHeader(HttpHeaders.AUTHORIZATION.toString())
             val helper = JWTAuthHelper(jwtAuth, null)
 

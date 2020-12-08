@@ -8,7 +8,12 @@ import io.vertx.core.Vertx
 class CircuitBreakerBuilder {
     companion object {
         @JvmStatic
-        fun make(vertx: Vertx, name: String, options: CircuitBreakerOptions? = null, retryPolicy: ((Int) -> Long)? = null): CircuitBreaker {
+        fun make(
+            vertx: Vertx,
+            name: String,
+            options: CircuitBreakerOptions? = null,
+            retryPolicy: ((Int) -> Long)? = null
+        ): CircuitBreaker {
             var opt = options
             if (options == null) {
                 opt = CircuitBreakerOptions().apply {
@@ -27,7 +32,12 @@ class CircuitBreakerBuilder {
         }
 
         @JvmStatic
-        fun makeWithUnlimitedRetries(vertx: Vertx, name: String, delayMs: Long = 5000L, maxFailCount: Int = 10): CircuitBreaker {
+        fun makeWithUnlimitedRetries(
+            vertx: Vertx,
+            name: String,
+            delayMs: Long = 5000L,
+            maxFailCount: Int = 10
+        ): CircuitBreaker {
             val options = CircuitBreakerOptions().apply {
                 maxFailures = maxFailCount
                 maxRetries = 0

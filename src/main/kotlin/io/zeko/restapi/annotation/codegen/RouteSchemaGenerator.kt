@@ -43,17 +43,17 @@ import kotlin.coroutines.CoroutineContext
 @AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedOptions(
-        RouteSchemaGenerator.KAPT_KOTLIN_GENERATED_OPTION_NAME,
-        RouteSchemaGenerator.SWAGGER_API_VERSION,
-        RouteSchemaGenerator.SWAGGER_TITLE,
-        RouteSchemaGenerator.SWAGGER_DESCRIPTION,
-        RouteSchemaGenerator.SWAGGER_HOST,
-        RouteSchemaGenerator.SWAGGER_BASEPATH,
-        RouteSchemaGenerator.SWAGGER_SAMPLE_RESULT_DIR,
-        RouteSchemaGenerator.SWAGGER_OUTPUT_FILE,
-        RouteSchemaGenerator.SWAGGER_CMP_SCHEMA_DIR,
-        RouteSchemaGenerator.DEFAULT_PRODUCES,
-        RouteSchemaGenerator.DEFAULT_CONSUMES
+    RouteSchemaGenerator.KAPT_KOTLIN_GENERATED_OPTION_NAME,
+    RouteSchemaGenerator.SWAGGER_API_VERSION,
+    RouteSchemaGenerator.SWAGGER_TITLE,
+    RouteSchemaGenerator.SWAGGER_DESCRIPTION,
+    RouteSchemaGenerator.SWAGGER_HOST,
+    RouteSchemaGenerator.SWAGGER_BASEPATH,
+    RouteSchemaGenerator.SWAGGER_SAMPLE_RESULT_DIR,
+    RouteSchemaGenerator.SWAGGER_OUTPUT_FILE,
+    RouteSchemaGenerator.SWAGGER_CMP_SCHEMA_DIR,
+    RouteSchemaGenerator.DEFAULT_PRODUCES,
+    RouteSchemaGenerator.DEFAULT_CONSUMES
 )
 class RouteSchemaGenerator : AbstractProcessor() {
     companion object {
@@ -72,24 +72,24 @@ class RouteSchemaGenerator : AbstractProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(
-                Params::class.java.canonicalName,
-                Routing::class.java.canonicalName,
-                Get::class.java.canonicalName,
-                Post::class.java.canonicalName,
-                Delete::class.java.canonicalName,
-                Put::class.java.canonicalName,
-                Head::class.java.canonicalName,
-                Patch::class.java.canonicalName,
-                Options::class.java.canonicalName,
-                GetSuspend::class.java.canonicalName,
-                PostSuspend::class.java.canonicalName,
-                DeleteSuspend::class.java.canonicalName,
-                PutSuspend::class.java.canonicalName,
-                HeadSuspend::class.java.canonicalName,
-                PatchSuspend::class.java.canonicalName,
-                OptionsSuspend::class.java.canonicalName,
-                Cron::class.java.canonicalName,
-                CronSuspend::class.java.canonicalName
+            Params::class.java.canonicalName,
+            Routing::class.java.canonicalName,
+            Get::class.java.canonicalName,
+            Post::class.java.canonicalName,
+            Delete::class.java.canonicalName,
+            Put::class.java.canonicalName,
+            Head::class.java.canonicalName,
+            Patch::class.java.canonicalName,
+            Options::class.java.canonicalName,
+            GetSuspend::class.java.canonicalName,
+            PostSuspend::class.java.canonicalName,
+            DeleteSuspend::class.java.canonicalName,
+            PutSuspend::class.java.canonicalName,
+            HeadSuspend::class.java.canonicalName,
+            PatchSuspend::class.java.canonicalName,
+            OptionsSuspend::class.java.canonicalName,
+            Cron::class.java.canonicalName,
+            CronSuspend::class.java.canonicalName
         )
     }
 
@@ -130,21 +130,21 @@ class RouteSchemaGenerator : AbstractProcessor() {
 
     private fun processCronAnnotations(roundEnv: RoundEnvironment, definitions: MutableList<CronDefinition>) {
         listOf(
-                Cron::class, CronSuspend::class
+            Cron::class, CronSuspend::class
         ).forEach { cronClass ->
             roundEnv.getElementsAnnotatedWith(cronClass.java)
-                    .forEach {
-                        val methodName = it.simpleName.toString()
-                        val controllerName = it.enclosingElement.asType().toString()
-                        val annoArgs = AnnotationUtils.elementValuesToMap(it.annotationMirrors, cronClass.asTypeName())
+                .forEach {
+                    val methodName = it.simpleName.toString()
+                    val controllerName = it.enclosingElement.asType().toString()
+                    val annoArgs = AnnotationUtils.elementValuesToMap(it.annotationMirrors, cronClass.asTypeName())
 
-                        val schedule = if (annoArgs.containsKey("schedule")) annoArgs["schedule"].toString() else ""
-                        val coroutine = cronClass.simpleName?.endsWith("Suspend") == true
-                        val pack = processingEnv.elementUtils.getPackageOf(it).toString()
+                    val schedule = if (annoArgs.containsKey("schedule")) annoArgs["schedule"].toString() else ""
+                    val coroutine = cronClass.simpleName?.endsWith("Suspend") == true
+                    val pack = processingEnv.elementUtils.getPackageOf(it).toString()
 
-                        val cronDef = CronDefinition(controllerName, methodName, schedule, coroutine, pack)
-                        definitions.add(cronDef)
-                    }
+                    val cronDef = CronDefinition(controllerName, methodName, schedule, coroutine, pack)
+                    definitions.add(cronDef)
+                }
         }
     }
 
@@ -177,27 +177,37 @@ class RouteSchemaGenerator : AbstractProcessor() {
         //Create handleJobs method
         val pack = definitions.first().pack
         val file = FileSpec.builder(pack, fileName)
-                .addType(TypeSpec.classBuilder(fileName)
-                        .superclass(CronSchema::class)
-                        .addSuperclassConstructorParameter("%N",
-                                ParameterSpec.builder("vertx", Vertx::class)
-                                        .build())
-                        .addSuperclassConstructorParameter("%N",
-                                ParameterSpec.builder("logger", Logger::class)
-                                        .build())
-                        .primaryConstructor(FunSpec.constructorBuilder()
-                                .addParameter("vertx", Vertx::class)
-                                .addParameter("logger", Logger::class)
-                                .build())
-                        .addFunction(FunSpec.builder("handleJobs")
-                                .addModifiers(KModifier.OVERRIDE)
-                                .addModifiers(KModifier.SUSPEND)
-                                .addParameter("runner", CronRunner::class)
-                                .addStatement(codeJobs)
-                                .build())
-                        .build())
-                .addImport(CronRunner::class.asClassName().packageName, CronRunner::class.asClassName().simpleName)
-                .build()
+            .addType(
+                TypeSpec.classBuilder(fileName)
+                    .superclass(CronSchema::class)
+                    .addSuperclassConstructorParameter(
+                        "%N",
+                        ParameterSpec.builder("vertx", Vertx::class)
+                            .build()
+                    )
+                    .addSuperclassConstructorParameter(
+                        "%N",
+                        ParameterSpec.builder("logger", Logger::class)
+                            .build()
+                    )
+                    .primaryConstructor(
+                        FunSpec.constructorBuilder()
+                            .addParameter("vertx", Vertx::class)
+                            .addParameter("logger", Logger::class)
+                            .build()
+                    )
+                    .addFunction(
+                        FunSpec.builder("handleJobs")
+                            .addModifiers(KModifier.OVERRIDE)
+                            .addModifiers(KModifier.SUSPEND)
+                            .addParameter("runner", CronRunner::class)
+                            .addStatement(codeJobs)
+                            .build()
+                    )
+                    .build()
+            )
+            .addImport(CronRunner::class.asClassName().packageName, CronRunner::class.asClassName().simpleName)
+            .build()
 
         val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
         logInfo("Writing cron class $kaptKotlinGeneratedDir/$fileName.kt")
@@ -206,49 +216,49 @@ class RouteSchemaGenerator : AbstractProcessor() {
     }
 
     private fun processParamAnnotations(
-            roundEnv: RoundEnvironment,
-            controllerProps: HashMap<String, MutableList<PropertySpec>>,
-            controllerRuleSchema: HashMap<String, HashMap<String, Map<String, List<Any>>>>,
-            methodsWithRules: HashMap<String, MutableList<String>>
+        roundEnv: RoundEnvironment,
+        controllerProps: HashMap<String, MutableList<PropertySpec>>,
+        controllerRuleSchema: HashMap<String, HashMap<String, Map<String, List<Any>>>>,
+        methodsWithRules: HashMap<String, MutableList<String>>
     ) {
         roundEnv.getElementsAnnotatedWith(Params::class.java)
-                .forEach {
-                    val methodName = it.simpleName.toString()
-                    val rules = mutableMapOf<String, String>()
-                    val controllerName = it.enclosingElement.asType().toString()
-                    val annoArgs = AnnotationUtils.elementValuesToMap(it.annotationMirrors, Params::class.asTypeName())
+            .forEach {
+                val methodName = it.simpleName.toString()
+                val rules = mutableMapOf<String, String>()
+                val controllerName = it.enclosingElement.asType().toString()
+                val annoArgs = AnnotationUtils.elementValuesToMap(it.annotationMirrors, Params::class.asTypeName())
 
-                    if (annoArgs.containsKey("rules")) {
-                        val rulesTypeMirror = annoArgs["rules"] as List<AnnotationValue?>
+                if (annoArgs.containsKey("rules")) {
+                    val rulesTypeMirror = annoArgs["rules"] as List<AnnotationValue?>
 
-                        for (rt in rulesTypeMirror) {
-                            val r = rt!!.value as String
-                            val rParts = r.split(" => ")
-                            val fieldName = rParts[0]
-                            val ruleStr = rParts[1]
-                            rules[fieldName] = ruleStr
-                        }
-                    }
-
-                    if (rules.isNotEmpty()) {
-                        val ruleSchema = HashMap<String, Map<String, List<Any>>>()
-                        if (!controllerProps.containsKey(controllerName)) {
-                            val properties = mutableListOf<PropertySpec>()
-                            properties.add(rulesToProperty(methodName, rules, ruleSchema))
-                            controllerProps[controllerName] = properties
-                        } else {
-                            val properties: MutableList<PropertySpec>? = controllerProps[controllerName]
-                            properties!!.add(rulesToProperty(methodName, rules, ruleSchema))
-                        }
-
-                        if (!methodsWithRules.containsKey(controllerName)) {
-                            methodsWithRules[controllerName] = mutableListOf(methodName)
-                        } else {
-                            methodsWithRules[controllerName]!!.add(methodName)
-                        }
-                        controllerRuleSchema["$controllerName.$methodName"] = ruleSchema
+                    for (rt in rulesTypeMirror) {
+                        val r = rt!!.value as String
+                        val rParts = r.split(" => ")
+                        val fieldName = rParts[0]
+                        val ruleStr = rParts[1]
+                        rules[fieldName] = ruleStr
                     }
                 }
+
+                if (rules.isNotEmpty()) {
+                    val ruleSchema = HashMap<String, Map<String, List<Any>>>()
+                    if (!controllerProps.containsKey(controllerName)) {
+                        val properties = mutableListOf<PropertySpec>()
+                        properties.add(rulesToProperty(methodName, rules, ruleSchema))
+                        controllerProps[controllerName] = properties
+                    } else {
+                        val properties: MutableList<PropertySpec>? = controllerProps[controllerName]
+                        properties!!.add(rulesToProperty(methodName, rules, ruleSchema))
+                    }
+
+                    if (!methodsWithRules.containsKey(controllerName)) {
+                        methodsWithRules[controllerName] = mutableListOf(methodName)
+                    } else {
+                        methodsWithRules[controllerName]!!.add(methodName)
+                    }
+                    controllerRuleSchema["$controllerName.$methodName"] = ruleSchema
+                }
+            }
     }
 
     private fun generateControllerSchemas(controllerProps: HashMap<String, MutableList<PropertySpec>>) {
@@ -259,12 +269,17 @@ class RouteSchemaGenerator : AbstractProcessor() {
 
             val pack = parts.take(parts.size - 1).joinToString(".")
             val file = FileSpec.builder(pack, fileName)
-                    .addType(TypeSpec.classBuilder(fileName)
+                .addType(
+                    TypeSpec.classBuilder(fileName)
                         .addType(companion)
-                        .build())
-                    .addImport(RoutingContext::class.asClassName().packageName, RoutingContext::class.asClassName().simpleName)
-                    .addImport(Route::class.asClassName().packageName, Route::class.asClassName().simpleName)
-                    .build()
+                        .build()
+                )
+                .addImport(
+                    RoutingContext::class.asClassName().packageName,
+                    RoutingContext::class.asClassName().simpleName
+                )
+                .addImport(Route::class.asClassName().packageName, Route::class.asClassName().simpleName)
+                .build()
 
             val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
             logInfo("Writing controller schema $kaptKotlinGeneratedDir/$fileName.kt")
@@ -273,43 +288,57 @@ class RouteSchemaGenerator : AbstractProcessor() {
     }
 
     private fun processRoutings(
-            roundEnv: RoundEnvironment,
-            definitions: MutableList<RouteDefinition>,
-            rootPathForController: HashMap<String, String>,
-            resourceDescribe: HashMap<String, RouteDefinition>,
-            methodsWithRules: HashMap<String, MutableList<String>>
+        roundEnv: RoundEnvironment,
+        definitions: MutableList<RouteDefinition>,
+        rootPathForController: HashMap<String, String>,
+        resourceDescribe: HashMap<String, RouteDefinition>,
+        methodsWithRules: HashMap<String, MutableList<String>>
     ) {
         roundEnv.getElementsAnnotatedWith(Routing::class.java)
-                .forEach {
-                    if (it.kind.isClass) {
-                        val annoArgs = AnnotationUtils.elementValuesToMap(it.annotationMirrors, Routing::class.asTypeName())
-                        val route = RoutingAnnotation(annoArgs)
-                        val cls = it.asType().toString()
-                        rootPathForController[cls] = route.path + ""
-                    } else {
-                        parseMethodRoute(it, Routing::class.asTypeName(), definitions, rootPathForController, resourceDescribe, methodsWithRules)
-                    }
+            .forEach {
+                if (it.kind.isClass) {
+                    val annoArgs = AnnotationUtils.elementValuesToMap(it.annotationMirrors, Routing::class.asTypeName())
+                    val route = RoutingAnnotation(annoArgs)
+                    val cls = it.asType().toString()
+                    rootPathForController[cls] = route.path + ""
+                } else {
+                    parseMethodRoute(
+                        it,
+                        Routing::class.asTypeName(),
+                        definitions,
+                        rootPathForController,
+                        resourceDescribe,
+                        methodsWithRules
+                    )
                 }
+            }
 
         listOf(
-                Get::class, Post::class, Put::class, Head::class,
-                Delete::class, Patch::class, Options::class,
-                GetSuspend::class, PostSuspend::class, PutSuspend::class, HeadSuspend::class,
-                DeleteSuspend::class, PatchSuspend::class, OptionsSuspend::class
+            Get::class, Post::class, Put::class, Head::class,
+            Delete::class, Patch::class, Options::class,
+            GetSuspend::class, PostSuspend::class, PutSuspend::class, HeadSuspend::class,
+            DeleteSuspend::class, PatchSuspend::class, OptionsSuspend::class
         ).forEach { routeClass ->
             roundEnv.getElementsAnnotatedWith(routeClass.java).forEach {
-                parseMethodRoute(it, routeClass.asTypeName(), definitions, rootPathForController, resourceDescribe, methodsWithRules)
+                parseMethodRoute(
+                    it,
+                    routeClass.asTypeName(),
+                    definitions,
+                    rootPathForController,
+                    resourceDescribe,
+                    methodsWithRules
+                )
             }
         }
     }
 
     private fun parseMethodRoute(
-            element: Element,
-            routeClass: ClassName,
-            definitions: MutableList<RouteDefinition>,
-            rootPathForController: HashMap<String, String>,
-            resourceDescribe: HashMap<String, RouteDefinition>,
-            methodsWithRules: HashMap<String, MutableList<String>>
+        element: Element,
+        routeClass: ClassName,
+        definitions: MutableList<RouteDefinition>,
+        rootPathForController: HashMap<String, String>,
+        resourceDescribe: HashMap<String, RouteDefinition>,
+        methodsWithRules: HashMap<String, MutableList<String>>
     ) {
         var methodName = element.simpleName.toString()
         var hasRules = false
@@ -343,28 +372,47 @@ class RouteSchemaGenerator : AbstractProcessor() {
             fullPath = rootPath + route.path
         }
 
-        val defaultProduces = if (processingEnv.options.containsKey(DEFAULT_PRODUCES)) processingEnv.options[DEFAULT_PRODUCES] + "" else "application/json"
-        val defaultConsumes = if (processingEnv.options.containsKey(DEFAULT_CONSUMES)) processingEnv.options[DEFAULT_CONSUMES] + "" else "application/x-www-form-urlencoded"
+        val defaultProduces =
+            if (processingEnv.options.containsKey(DEFAULT_PRODUCES)) processingEnv.options[DEFAULT_PRODUCES] + "" else "application/json"
+        val defaultConsumes =
+            if (processingEnv.options.containsKey(DEFAULT_CONSUMES)) processingEnv.options[DEFAULT_CONSUMES] + "" else "application/x-www-form-urlencoded"
         val describe = if (route.describe != null) route.describe!!.trimIndent() else ""
         val schemaRef = if (route.schemaRef != null) route.schemaRef!!.trimIndent() else ""
         val produces = if (route.produces != null) route.produces!!.trimIndent() else defaultProduces
         val consumes = if (route.consumes != null) route.consumes!!.trimIndent() else defaultConsumes
 
         val pack = processingEnv.elementUtils.getPackageOf(element).toString()
-        val routeDef = RouteDefinition(controllerName, methodName, fullPath, httpMethod, coroutine, hasRules, pack, describe, produces, consumes, schemaRef)
+        val routeDef = RouteDefinition(
+            controllerName,
+            methodName,
+            fullPath,
+            httpMethod,
+            coroutine,
+            hasRules,
+            pack,
+            describe,
+            produces,
+            consumes,
+            schemaRef
+        )
         definitions.add(routeDef)
         resourceDescribe[fullPath] = routeDef
     }
 
     private fun generateSwaggerDoc(
-            resourceDescribe: HashMap<String, RouteDefinition>,
-            controllerRuleSchema: HashMap<String, HashMap<String, Map<String, List<Any>>>>
+        resourceDescribe: HashMap<String, RouteDefinition>,
+        controllerRuleSchema: HashMap<String, HashMap<String, Map<String, List<Any>>>>
     ) {
-        val apiVersion = if (processingEnv.options.containsKey(SWAGGER_API_VERSION)) processingEnv.options[SWAGGER_API_VERSION] else "1.0"
-        val title = if (processingEnv.options.containsKey(SWAGGER_TITLE)) processingEnv.options[SWAGGER_TITLE] else "REST API"
-        val description = if (processingEnv.options.containsKey(SWAGGER_DESCRIPTION)) processingEnv.options[SWAGGER_DESCRIPTION] else ""
-        val host = if (processingEnv.options.containsKey(SWAGGER_HOST)) processingEnv.options[SWAGGER_HOST] else "localhost"
-        val basePath = if (processingEnv.options.containsKey(SWAGGER_BASEPATH)) processingEnv.options[SWAGGER_BASEPATH] else "/"
+        val apiVersion =
+            if (processingEnv.options.containsKey(SWAGGER_API_VERSION)) processingEnv.options[SWAGGER_API_VERSION] else "1.0"
+        val title =
+            if (processingEnv.options.containsKey(SWAGGER_TITLE)) processingEnv.options[SWAGGER_TITLE] else "REST API"
+        val description =
+            if (processingEnv.options.containsKey(SWAGGER_DESCRIPTION)) processingEnv.options[SWAGGER_DESCRIPTION] else ""
+        val host =
+            if (processingEnv.options.containsKey(SWAGGER_HOST)) processingEnv.options[SWAGGER_HOST] else "localhost"
+        val basePath =
+            if (processingEnv.options.containsKey(SWAGGER_BASEPATH)) processingEnv.options[SWAGGER_BASEPATH] else "/"
         val swaggerFilePath = processingEnv.options[SWAGGER_OUTPUT_FILE]
 
         val cmpSchemas = jsonObjectOf()
@@ -533,9 +581,10 @@ class RouteSchemaGenerator : AbstractProcessor() {
         }
     }
 
-    private fun rulesToProperty(methodName: String,
-            rules: Map<String, String>,
-            ruleSchema: HashMap<String, Map<String, List<Any>>>
+    private fun rulesToProperty(
+        methodName: String,
+        rules: Map<String, String>,
+        ruleSchema: HashMap<String, Map<String, List<Any>>>
     ): PropertySpec {
         var fieldRuleStr = "mapOf(\n"
         val tabArgs = "                            "
@@ -543,10 +592,10 @@ class RouteSchemaGenerator : AbstractProcessor() {
 
         /** Need to generate this property in controller schema class
         var ruleName = mapOf(
-            "required" to null,
-            "length" to listOf(2, 12)
+        "required" to null,
+        "length" to listOf(2, 12)
         )
-        */
+         */
         if (rules.isNotEmpty()) {
             for ((field, ruleStr) in rules) {
                 val rule = Validator.parseRules(ruleStr)
@@ -582,19 +631,19 @@ class RouteSchemaGenerator : AbstractProcessor() {
 
         //Map<String, Map<String, List<Any>?>>
         val ruleMapValueType = Map::class.asClassName()
-                .parameterizedBy(
-                    String::class.asClassName(),
-                    List::class.asClassName().parameterizedBy(
-                        Any::class.asClassName()
-                    ).copy(nullable = true)
-                )
+            .parameterizedBy(
+                String::class.asClassName(),
+                List::class.asClassName().parameterizedBy(
+                    Any::class.asClassName()
+                ).copy(nullable = true)
+            )
 
         val ruleMapType = Map::class.asClassName()
-                .parameterizedBy(String::class.asClassName(), ruleMapValueType)
+            .parameterizedBy(String::class.asClassName(), ruleMapValueType)
 
         val fieldRules = PropertySpec.builder("${methodName}Rules", ruleMapType)
-                .initializer("%L", fieldRuleStr)
-                .build()
+            .initializer("%L", fieldRuleStr)
+            .build()
 
         return fieldRules
     }
@@ -665,32 +714,40 @@ class RouteSchemaGenerator : AbstractProcessor() {
 
         val pack = definitions.first().pack
         val file = FileSpec.builder(pack, fileName)
-                .addType(TypeSpec.classBuilder(fileName)
-                        .superclass(RouteSchema::class)
-                        .addSuperclassConstructorParameter("%N",
-                                ParameterSpec.builder("vertx", Vertx::class)
-                                .build())
-                        .primaryConstructor(FunSpec.constructorBuilder()
-                                .addParameter("vertx", Vertx::class)
-                                .build())
+            .addType(
+                TypeSpec.classBuilder(fileName)
+                    .superclass(RouteSchema::class)
+                    .addSuperclassConstructorParameter(
+                        "%N",
+                        ParameterSpec.builder("vertx", Vertx::class)
+                            .build()
+                    )
+                    .primaryConstructor(
+                        FunSpec.constructorBuilder()
+                            .addParameter("vertx", Vertx::class)
+                            .build()
+                    )
 //                        .addProperty(PropertySpec.builder("vertx", Vertx::class)
 //                                .initializer("vertx")
 //                                .build())
-                        .addFunction(FunSpec.builder("handleRoutes")
-                                .addModifiers(KModifier.OVERRIDE)
-                                .addParameter("router", Router::class)
-                                .addParameter("logger", Logger::class)
-                                .addParameter("koto", fnParam)
-                                .addStatement(codeRoutes)
-                                .build())
-                        .build())
-                .addImport(RoutingContext::class.asClassName().packageName, RoutingContext::class.asClassName().simpleName)
-                .addImport(Route::class.asClassName().packageName, Route::class.asClassName().simpleName)
-                .addImport(CoroutineScope::class.asClassName().packageName, CoroutineScope::class.asClassName().simpleName)
-                .addImport(Dispatchers::class.asClassName().packageName, Dispatchers::class.asClassName().simpleName)
-                .addImport("kotlinx.coroutines", "launch")
-                .addImport("kotlinx.coroutines", "withContext")
-                .build()
+                    .addFunction(
+                        FunSpec.builder("handleRoutes")
+                            .addModifiers(KModifier.OVERRIDE)
+                            .addParameter("router", Router::class)
+                            .addParameter("logger", Logger::class)
+                            .addParameter("koto", fnParam)
+                            .addStatement(codeRoutes)
+                            .build()
+                    )
+                    .build()
+            )
+            .addImport(RoutingContext::class.asClassName().packageName, RoutingContext::class.asClassName().simpleName)
+            .addImport(Route::class.asClassName().packageName, Route::class.asClassName().simpleName)
+            .addImport(CoroutineScope::class.asClassName().packageName, CoroutineScope::class.asClassName().simpleName)
+            .addImport(Dispatchers::class.asClassName().packageName, Dispatchers::class.asClassName().simpleName)
+            .addImport("kotlinx.coroutines", "launch")
+            .addImport("kotlinx.coroutines", "withContext")
+            .build()
 
         val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
         logInfo("Writing route class $kaptKotlinGeneratedDir/$fileName.kt")

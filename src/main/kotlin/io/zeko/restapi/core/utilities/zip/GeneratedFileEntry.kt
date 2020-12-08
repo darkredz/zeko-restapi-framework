@@ -8,9 +8,9 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 
 
-class GeneratedFileEntry (
-        private val fileName: String,
-        private val content: String
+class GeneratedFileEntry(
+    private val fileName: String,
+    private val content: String
 ) : FileEntry {
     override val path: String
         get() = fileName

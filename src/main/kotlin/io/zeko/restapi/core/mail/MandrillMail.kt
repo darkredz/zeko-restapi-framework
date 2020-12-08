@@ -14,7 +14,12 @@ import kotlinx.coroutines.*
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger: Logger, val sendEndpoint: String = "/api/1.0/messages/send.json") : MailService {
+class MandrillMail(
+    val webClient: WebClient,
+    val config: MailConfig,
+    val logger: Logger,
+    val sendEndpoint: String = "/api/1.0/messages/send.json"
+) : MailService {
 
     companion object {
         @JvmStatic
@@ -22,7 +27,8 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
             if (options != null)
                 return WebClient.create(vertx, options)
 
-            return WebClient.create(vertx, WebClientOptions()
+            return WebClient.create(
+                vertx, WebClientOptions()
                     .setMaxPoolSize(15)
                     .setDefaultHost("mandrillapp.com")
                     .setSsl(true)
@@ -35,16 +41,33 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
         }
 
         @JvmStatic
-        fun createCircuitBreaker(vertx: Vertx, name: String = "zeko.mail.mandrill", options: CircuitBreakerOptions? = null): CircuitBreaker {
+        fun createCircuitBreaker(
+            vertx: Vertx,
+            name: String = "zeko.mail.mandrill",
+            options: CircuitBreakerOptions? = null
+        ): CircuitBreaker {
             return CircuitBreakerBuilder.make(vertx, name, options)
         }
     }
 
-    override suspend fun send(toEmail: String, name: String, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(
+        toEmail: String,
+        name: String,
+        subject: String,
+        html: String,
+        text: String?,
+        tags: List<String>?
+    ): MailResponse {
         return send(listOf(toEmail), listOf(name), subject, html, text, tags)
     }
 
-    override suspend fun send(toList: List<String>, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(
+        toList: List<String>,
+        subject: String,
+        html: String,
+        text: String?,
+        tags: List<String>?
+    ): MailResponse {
         val toEmail = arrayListOf<String>()
         val names = arrayListOf<String>()
         toList.forEach {
@@ -62,15 +85,22 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
         return send(toEmail, names, subject, html, text, tags)
     }
 
-    override suspend fun send(toEmail: List<String>, names: List<String>, subject: String, html: String, text: String?, tags: List<String>?): MailResponse {
+    override suspend fun send(
+        toEmail: List<String>,
+        names: List<String>,
+        subject: String,
+        html: String,
+        text: String?,
+        tags: List<String>?
+    ): MailResponse {
         val postData = mapOf(
-                "key" to config.apiKey,
-                "message" to mutableMapOf(
-                        "html" to html,
-                        "subject" to subject,
-                        "from_email" to config.fromEmail,
-                        "from_name" to config.fromName
-                )
+            "key" to config.apiKey,
+            "message" to mutableMapOf(
+                "html" to html,
+                "subject" to subject,
+                "from_email" to config.fromEmail,
+                "from_name" to config.fromName
+            )
         )
 
         val msg = postData["message"] as MutableMap<String, Any>
@@ -153,9 +183,9 @@ class MandrillMail(val webClient: WebClient, val config: MailConfig, val logger:
     }
 
     override suspend fun sendInCircuit(
-            breaker: CircuitBreaker, toEmail: String,
-            name: String, subject: String,
-            html: String, text: String?, tags: List<String>?
+        breaker: CircuitBreaker, toEmail: String,
+        name: String, subject: String,
+        html: String, text: String?, tags: List<String>?
     ): MailResponse {
         return breaker.executeSuspendAwait {
             val res = send(toEmail, name, subject, html, text, tags)

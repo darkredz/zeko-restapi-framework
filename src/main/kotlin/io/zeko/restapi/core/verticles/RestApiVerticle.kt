@@ -106,7 +106,13 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
         }
     }
 
-    fun handleRuntimeError(router: Router, logger: Logger, asJson: Boolean = false, errorMessage: String = "Internal Server Error", errorLogPrefix: String = "RUNTIME_ERROR") {
+    fun handleRuntimeError(
+        router: Router,
+        logger: Logger,
+        asJson: Boolean = false,
+        errorMessage: String = "Internal Server Error",
+        errorLogPrefix: String = "RUNTIME_ERROR"
+    ) {
         router.route().failureHandler {
             val statusCode = if (it.statusCode() > 0) it.statusCode() else 500
             var response = it.response()
@@ -155,33 +161,35 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
         val headers = it.response().headers()
         val requestHeaders = it.request().headers()
 
-        return json { obj(
+        return json {
+            obj(
                 "time" to now.toString(),
                 "sec" to nowMs,
                 "ip" to it.request().remoteAddress().host(),
                 "request" to obj(
-                        "host" to it.request().host(),
-                        "method" to it.request().method().name,
-                        "url" to it.normalisedPath(),
-                        "path_params" to it.pathParams(),
-                        "query" to it.queryParams().toHashSet().associate { s -> Pair(s.key, s.value) },
-                        "headers" to obj(
-                                "user_agent" to requestHeaders["User-Agent"],
-                                "content_type" to requestHeaders["Content-Type"],
-                                "content_length" to requestHeaders["Content-Length"],
-                                "accept_language" to requestHeaders["Accept-Language"],
-                                "accept" to requestHeaders["Accept"]
-                        )
+                    "host" to it.request().host(),
+                    "method" to it.request().method().name,
+                    "url" to it.normalisedPath(),
+                    "path_params" to it.pathParams(),
+                    "query" to it.queryParams().toHashSet().associate { s -> Pair(s.key, s.value) },
+                    "headers" to obj(
+                        "user_agent" to requestHeaders["User-Agent"],
+                        "content_type" to requestHeaders["Content-Type"],
+                        "content_length" to requestHeaders["Content-Length"],
+                        "accept_language" to requestHeaders["Accept-Language"],
+                        "accept" to requestHeaders["Accept"]
+                    )
                 ),
                 "response" to obj(
-                        "status" to it.response().statusCode,
-                        "headers" to obj(
-                                "content_type" to headers["Content-Type"],
-                                "content_length" to headers["Content-Length"],
-                                "cache_control" to headers["Cache-Control"]
-                        )
+                    "status" to it.response().statusCode,
+                    "headers" to obj(
+                        "content_type" to headers["Content-Type"],
+                        "content_length" to headers["Content-Length"],
+                        "cache_control" to headers["Cache-Control"]
+                    )
                 ),
                 "response_time" to responseTime
-        ) }
+            )
+        }
     }
 }
