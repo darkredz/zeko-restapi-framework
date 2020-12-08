@@ -47,7 +47,7 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.2.2</version>
+      <version>1.2.3</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
@@ -65,7 +65,7 @@ Add this to your maven pom.xml
     <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-jdbc-client</artifactId>
-        <version>3.9.2</version>
+        <version>3.9.4</version>
     </dependency>
     <dependency>
         <groupId>org.jetbrains.kotlinx</groupId>
