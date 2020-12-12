@@ -11,7 +11,8 @@ open class JWTAuthHandler(
     protected val jwtAuth: JWTAuth,
     protected val skipAuth: List<String>,
     protected val continueAfterFail: Boolean = false,
-    protected val statusFail: Int = 401
+    protected val statusFail: Int = 401,
+    protected val useCamelCase: Boolean = false
 ) : Handler<RoutingContext> {
 
     override fun handle(ctx: RoutingContext) {
@@ -43,7 +44,7 @@ open class JWTAuthHandler(
 
         if (!skip) {
             var authHeader = ctx.request().getHeader(HttpHeaders.AUTHORIZATION.toString())
-            val helper = JWTAuthHelper(jwtAuth, null)
+            val helper = JWTAuthHelper(jwtAuth, null, useCamelCase)
 
             helper.validateToken(authHeader) { user, result ->
                 if (user == null) {

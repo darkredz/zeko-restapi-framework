@@ -72,11 +72,23 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
         }
     }
 
-    fun bindRoutes(schema: RouteSchema, router: Router, logger: Logger) {
+    fun bindRoutes(schema: RouteSchema, router: Router, logger: Logger, useCamelCaseResponse: Boolean = false) {
+        if (useCamelCaseResponse) {
+            router.route().handler {
+                it.put("useCamelCaseResponse", true)
+                it.next()
+            }
+        }
         schema.handleRoutes(router, logger, this::koto)
     }
 
-    fun bindRoutes(schemaClass: String, router: Router, logger: Logger) {
+    fun bindRoutes(schemaClass: String, router: Router, logger: Logger, useCamelCaseResponse: Boolean = false) {
+        if (useCamelCaseResponse) {
+            router.route().handler {
+                it.put("useCamelCaseResponse", true)
+                it.next()
+            }
+        }
         try {
             val cls = Class.forName(schemaClass)
             val constructor = cls.constructors.first()
