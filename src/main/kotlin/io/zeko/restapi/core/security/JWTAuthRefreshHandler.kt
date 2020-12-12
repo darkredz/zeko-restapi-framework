@@ -24,16 +24,16 @@ open class JWTAuthRefreshHandler(
             accessToken = "invalid"
         }
 
-        val refreskTokenKey = if (useCamelCase) "refreshToken" else "refresh_token"
-        var refreshToken = ctx.request().params().get(refreskTokenKey) + ""
-        val helper = JWTAuthHelper(jwtAuth, jwtAuthRefresh)
+        val refreshTokenKey = if (useCamelCase) "refreshToken" else "refresh_token"
+        var refreshToken = ctx.request().params().get(refreshTokenKey) + ""
+        val helper = JWTAuthHelper(jwtAuth, jwtAuthRefresh, useCamelCase)
 
         helper.refreshToken(
             refreshToken, accessToken, tokenExpireSeconds,
             refreshExpireSeconds, refreshAfterExpired
         ) { user, result ->
             if (user == null) {
-                ctx.response().setStatusCode(401)
+                ctx.response().statusCode = 401
                 ctx.endJson(result)
             } else {
                 ctx.endJson(result)

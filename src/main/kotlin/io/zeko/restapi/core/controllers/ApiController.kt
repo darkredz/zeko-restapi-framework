@@ -10,19 +10,27 @@ import java.lang.Double
 import java.lang.Float
 import java.lang.Long
 import io.vertx.kotlin.core.json.*
+import io.zeko.db.sql.utilities.toCamelCase
 import io.zeko.restapi.core.utilities.endJson
 import io.zeko.restapi.core.utilities.errorJson
 import io.zeko.restapi.core.utilities.validate
 import io.zeko.restapi.core.validations.ValidateResult
 import io.zeko.restapi.core.validations.ValidationError
 
-open abstract class ApiController(val vertx: Vertx, val logger: Logger, val context: RoutingContext) : Controller {
-
+open abstract class ApiController(
+    val vertx: Vertx,
+    val logger: Logger,
+    val context: RoutingContext
+) : Controller {
     var params: Map<String, String>? = null
+    var useCamelCaseResponse: Boolean = false
 
     init {
         val entries = context.request().params().entries()
         params = entries.associate { Pair(it.key, it.value) }
+        if (context.get<Boolean>("useCamelCaseResponse")) {
+            useCamelCaseResponse = true
+        }
     }
 
     override fun inputRules(): Map<String, Map<String, String>> {
@@ -66,15 +74,21 @@ open abstract class ApiController(val vertx: Vertx, val logger: Logger, val cont
         return validateResult
     }
 
+    protected fun getJsonKey(key: String): String {
+        if (useCamelCaseResponse)
+            return key.toCamelCase()
+        return key
+    }
+
     protected open fun outputNoRulesError(statusCode: Int, errorCode: Int): ValidateResult {
         val values = HashMap<String, Any?>()
         val errors = mapOf(
-            "server_error" to listOf("Undefined input rules for this endpoint")
+            getJsonKey("server_error") to listOf("Undefined input rules for this endpoint")
         )
         val validateResult = ValidateResult(false, -1, errors, values)
         val res = json {
             obj(
-                "error_code" to errorCode,
+                getJsonKey("error_code") to errorCode,
                 "errors" to validateResult.errors
             )
         }

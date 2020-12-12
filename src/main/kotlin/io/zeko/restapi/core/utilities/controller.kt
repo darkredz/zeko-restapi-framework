@@ -42,11 +42,14 @@ fun RoutingContext.errorJson(errors: Map<String, List<String>>, code: Int = 422)
 }
 
 fun RoutingContext.errorJson(errors: Map<String, List<String>>, statusCode: Int = 422, errorCode: Int = 422) {
+    val useCamelCase = this.get<Boolean>("useCamelCaseResponse")
+    val errCodeKey = if (useCamelCase) "error_code" else "errorCode"
+
     this.response().setStatusCode(statusCode)
         .putHeader("Content-Type", "application/json")
         .end(json {
             obj(
-                "error_code" to errorCode,
+                errCodeKey to errorCode,
                 "errors" to JsonObject(errors)
             )
         }.encode())
