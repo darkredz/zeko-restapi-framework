@@ -115,7 +115,7 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
         router.route("/*").handler {
             val logMsg = generateAccessLogBody(it)
             logger.info(logMsg.encode())
-            it.next()
+            if (!it.response().ended()) it.next()
         }
     }
 
