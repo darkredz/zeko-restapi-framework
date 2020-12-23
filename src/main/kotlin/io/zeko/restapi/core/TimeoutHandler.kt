@@ -12,7 +12,7 @@ class TimeoutHandler(
         var shouldSkip = false
 
         if (skipPaths != null) {
-            val path = ctx.normalisedPath()
+            val path = ctx.normalizedPath()
             for (uri in skipPaths) {
                 if (uri.contains("*")) {
                     if (path.startsWith(uri.removeSuffix("*"))) {

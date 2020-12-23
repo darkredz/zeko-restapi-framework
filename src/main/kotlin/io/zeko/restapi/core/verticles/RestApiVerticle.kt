@@ -129,7 +129,7 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
         router.route().failureHandler {
             val statusCode = if (it.statusCode() > 0) it.statusCode() else 500
             var response = it.response()
-            val path = it.normalisedPath()
+            val path = it.normalizedPath()
             val err = it.failure()
 
             if (err != null) {
@@ -181,8 +181,8 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
                 "ip" to it.request().remoteAddress().host(),
                 "request" to obj(
                     "host" to it.request().host(),
-                    "method" to it.request().method().name,
-                    "url" to it.normalisedPath(),
+                    "method" to it.request().method().name(),
+                    "url" to it.normalizedPath(),
                     "path_params" to it.pathParams(),
                     "query" to it.queryParams().toHashSet().associate { s -> Pair(s.key, s.value) },
                     "headers" to obj(

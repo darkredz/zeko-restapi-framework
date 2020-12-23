@@ -18,7 +18,7 @@ open class JWTAuthHandler(
     override fun handle(ctx: RoutingContext) {
         var skip = false
         if (this.skipAuth != null) {
-            val path = ctx.normalisedPath()
+            val path = ctx.normalizedPath()
 
             if (this.skipAuth.contains(path)) {
                 skip = true

@@ -7,7 +7,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.Logger
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
-import io.vertx.kotlin.ext.web.client.sendJsonAwait
+import io.vertx.kotlin.coroutines.await
 import io.zeko.restapi.core.CircuitBreakerBuilder
 import io.zeko.restapi.core.utilities.executeSuspendAwait
 import kotlinx.coroutines.*
@@ -129,7 +129,7 @@ class MandrillMail(
 
         msg["to"] = toList
 
-        val res = webClient.post(sendEndpoint).sendJsonAwait(JsonObject(postData))
+        val res = webClient.post(sendEndpoint).sendJson(JsonObject(postData)).await()
         val status = res.statusCode()
         val tagStr = if (tags.isNullOrEmpty()) "" else tags.joinToString(",")
 
