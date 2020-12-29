@@ -199,22 +199,26 @@ class BootstrapVerticle : AbstractVerticle() {
     }
 
     override fun start() {
-        val logger = LoggerFactory.getLogger("app")
+        val logFactory = System.getProperty("org.vertx.logger-delegate-factory-class-name")
+        if (logFactory == null) {
+            System.setProperty("org.vertx.logger-delegate-factory-class-name", SLF4JLogDelegateFactory::class.java.name)
+        }
+        val logger = LoggerFactory.getLogger(BootstrapVerticle.javaClass")
         logger.info("STARTING APP...")
 
-        Json.mapper.registerModule(JavaTimeModule())
-        Json.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        Json.mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+        DatabindCodec.mapper().registerModule(JavaTimeModule())
+        DatabindCodec.mapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+        DatabindCodec.mapper().propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
         //set JWT keys for auth
         val jwtAuthKeys = listOf(
-                PubSecKeyOptions().setAlgorithm("HS256").setPublicKey("$jwtKey").setSymmetric(true)
+                PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtKey")
         )
         val jwtOpt = JWTAuthOptions().setPubSecKeys(jwtAuthKeys)
         var jwtAuth = JWTAuth.create(vertx, jwtOpt)
 
         val jwtRefreshOpt = JWTAuthOptions().setPubSecKeys(listOf(
-                PubSecKeyOptions().setAlgorithm("HS256").setPublicKey("$jwtRefreshKey").setSymmetric(true)
+                PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtRefreshKey")
         ))
         var jwtAuthRefresh = JWTAuth.create(vertx, jwtRefreshOpt)
 
