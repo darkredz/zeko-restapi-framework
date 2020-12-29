@@ -236,10 +236,7 @@ class BootstrapVerticle : AbstractVerticle() {
         Koin.logger = EmptyLogger()
 
         vertx.registerVerticleFactory(KoinVerticleFactory)
-        vertx.deployVerticle(
-                "${'$'}{KoinVerticleFactory.prefix()}:${'$'}{RestApiVerticle::class.java.canonicalName}",
-                DeploymentOptions().setInstances(1)
-        )
+        vertx.deployVerticle(RestApiVerticle::class.java.canonicalName, DeploymentOptions().setInstances(1))
     }
 }
         """.trimIndent()
