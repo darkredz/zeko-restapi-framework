@@ -5,7 +5,7 @@ import com.cronutils.model.definition.CronDefinitionBuilder
 import com.cronutils.model.time.ExecutionTime
 import com.cronutils.parser.CronParser
 import io.vertx.core.Vertx
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.zeko.restapi.core.utilities.runCron
 import io.zeko.restapi.core.utilities.runCronSuspend
 import java.time.Duration

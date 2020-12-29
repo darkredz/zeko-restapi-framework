@@ -1,7 +1,7 @@
 package io.zeko.restapi.core.verticles
 
 import io.vertx.core.json.JsonObject
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext

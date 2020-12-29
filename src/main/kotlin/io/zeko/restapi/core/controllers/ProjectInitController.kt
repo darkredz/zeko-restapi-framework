@@ -3,7 +3,7 @@ package io.zeko.restapi.core.controllers
 import io.vertx.core.Vertx
 import io.zeko.restapi.annotation.http.*
 import io.zeko.restapi.annotation.Params
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.web.RoutingContext
 import io.zeko.db.sql.utilities.toCamelCase
 import io.zeko.db.sql.utilities.toSnakeCase
@@ -66,7 +66,7 @@ open class ProjectInitController(vertx: Vertx, logger: Logger, context: RoutingC
 package $packageName
 
 import io.vertx.core.Vertx
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
 import io.zeko.db.sql.connections.*
@@ -97,7 +97,7 @@ class DB {
         val clsAppDbLog = """
 package $packageName
 
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.zeko.db.sql.connections.DBLogLevel
 import io.zeko.db.sql.connections.DBLogger
 
@@ -180,7 +180,7 @@ import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.json.Json
-import io.vertx.core.logging.LoggerFactory
+import org.slf4j.LoggerFactory
 import io.vertx.ext.auth.PubSecKeyOptions
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.auth.jwt.JWTAuthOptions
@@ -243,7 +243,7 @@ class BootstrapVerticle : AbstractVerticle() {
         val clsRestApi = """
 package $packageName
 
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
@@ -302,7 +302,7 @@ import io.zeko.restapi.annotation.http.*
 import io.zeko.restapi.annotation.Params
 import io.zeko.restapi.core.controllers.ApiController
 import io.zeko.restapi.core.validations.ValidateResult
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.web.RoutingContext
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject

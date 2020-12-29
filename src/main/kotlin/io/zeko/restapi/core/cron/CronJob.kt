@@ -2,7 +2,7 @@ package io.zeko.restapi.core.cron
 
 import com.cronutils.model.CronType
 import io.vertx.core.Vertx
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 
 open abstract class CronJob(val vertx: Vertx, val logger: Logger) {
     var cronRunner: CronRunner? = null
