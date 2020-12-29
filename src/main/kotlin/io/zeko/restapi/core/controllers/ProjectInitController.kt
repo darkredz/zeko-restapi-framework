@@ -375,8 +375,8 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
     <properties>
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
         <kotlin.version>1.4.10</kotlin.version>
-        <zeko-restapi.version>1.3.0</zeko-restapi.version>
-        <vertx.version>4.0..0</vertx.version>
+        <zeko-restapi.version>1.3.1</zeko-restapi.version>
+        <vertx.version>4.0.0</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
         <java.version>1.8</java.version>
         <jib.version>2.2.0</jib.version>
@@ -435,17 +435,17 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.10.0</version>
+            <version>2.10.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.10.0</version>
+            <version>2.10.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>2.10.2</version>
+            <version>2.10.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -463,6 +463,18 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
             <version>2.10.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.koin</groupId>
             <artifactId>koin-core</artifactId>
