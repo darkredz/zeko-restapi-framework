@@ -47,13 +47,13 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.3.1</version>
+      <version>1.3.2</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
        <groupId>com.github.jasync-sql</groupId>
        <artifactId>jasync-mysql</artifactId>
-       <version>1.1.3</version>
+       <version>1.1.5</version>
     </dependency>
     <!-- Hikari Mysql connection pool if needed -->
     <dependency>
