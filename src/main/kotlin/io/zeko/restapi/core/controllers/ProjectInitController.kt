@@ -376,8 +376,8 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
     <properties>
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
         <kotlin.version>1.4.10</kotlin.version>
-        <zeko-restapi.version>1.3.2</zeko-restapi.version>
-        <vertx.version>4.0.0</vertx.version>
+        <zeko-restapi.version>1.3.3</zeko-restapi.version>
+        <vertx.version>4.0.2</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
         <java.version>1.8</java.version>
         <jib.version>2.2.0</jib.version>
@@ -430,7 +430,7 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>1.3.3</version>
+            <version>1.3.9</version>
         </dependency>
 
         <dependency>
