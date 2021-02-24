@@ -1,6 +1,6 @@
 package io.zeko.restapi.core.security
 
-import sun.misc.BASE64Encoder
+import java.util.Base64
 import java.math.BigInteger
 import java.net.URLEncoder
 import java.security.NoSuchAlgorithmException
@@ -20,7 +20,7 @@ class PasswordSecurity {
             val secret = SecretKeySpec(secretKey.toByteArray(), "HmacSHA1")
             mac.init(secret)
             val digest = mac.doFinal(rurl.toByteArray())
-            val signature = BASE64Encoder().encode(digest)
+            val signature = Base64.getEncoder().encodeToString(digest)
             return URLEncoder.encode(signature, "UTF-8")
         } catch (err: Exception) {
         }
