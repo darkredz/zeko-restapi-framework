@@ -70,7 +70,7 @@ Add this to your maven pom.xml
     <dependency>
         <groupId>org.jetbrains.kotlinx</groupId>
         <artifactId>kotlinx-coroutines-core</artifactId>
-        <version>1.5.0</version>
+        <version>1.3.9</version>
     </dependency>
     
 ### Enable Annotation Processor
