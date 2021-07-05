@@ -131,6 +131,7 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
             var response = it.response()
             val path = it.normalizedPath()
             val err = it.failure()
+            var responseEnded = false
 
             if (err != null) {
                 val sw = StringWriter()
@@ -150,6 +151,7 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
             } else {
                 if (statusCode == 503) {
                     response.setStatusCode(503).end("Service Unavailable")
+                    responseEnded = true
                     if (!asJson) {
                         logger.error("SERVICE_UNAVAILABLE 503 $path")
                     } else {
@@ -162,7 +164,9 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
             }
 
             // Status code will be 500 for the RuntimeException
-            response.setStatusCode(statusCode).end(errorMessage)
+            if (!responseEnded) {
+                response.setStatusCode(statusCode).end(errorMessage)
+            }
         }
     }
 
