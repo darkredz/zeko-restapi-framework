@@ -47,7 +47,7 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.3.5</version>
+      <version>1.3.6</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
@@ -65,12 +65,12 @@ Add this to your maven pom.xml
     <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-jdbc-client</artifactId>
-        <version>4.0.2</version>
+        <version>4.1.1</version>
     </dependency>
     <dependency>
         <groupId>org.jetbrains.kotlinx</groupId>
         <artifactId>kotlinx-coroutines-core</artifactId>
-        <version>1.3.9</version>
+        <version>1.5.0</version>
     </dependency>
     
 ### Enable Annotation Processor
