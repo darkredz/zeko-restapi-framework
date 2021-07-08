@@ -39,9 +39,9 @@ open class ProjectInitController(vertx: Vertx, logger: Logger, context: RoutingC
             "http_port => required, isInteger, min;80, max:20000"
         ]
     )
-    open suspend fun createNew(ctx: RoutingContext) {
+    open suspend fun createNew(ctx: RoutingContext, returnFiles: Boolean = false): List<TempFile>? {
         val res = validateInput()
-        if (!res.success) return
+        if (!res.success) return null
 
         val packageName = res.values["package_name"].toString()
         val artifactId = res.values["artifact_id"].toString()
@@ -211,16 +211,11 @@ class BootstrapVerticle : AbstractVerticle() {
         DatabindCodec.mapper().propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
         //set JWT keys for auth
-        val jwtAuthKeys = listOf(
-                PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtKey")
-        )
-        val jwtOpt = JWTAuthOptions().setPubSecKeys(jwtAuthKeys)
-        var jwtAuth = JWTAuth.create(vertx, jwtOpt)
+        val pubSecKey = PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtKey")
+        var jwtAuth = JWTAuth.create(vertx, JWTAuthOptions().addPubSecKey(pubSecKey))
 
-        val jwtRefreshOpt = JWTAuthOptions().setPubSecKeys(listOf(
-                PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtRefreshKey")
-        ))
-        var jwtAuthRefresh = JWTAuth.create(vertx, jwtRefreshOpt)
+        val pubSecKeyRefresh = PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtRefreshKey")
+        var jwtAuthRefresh = JWTAuth.create(vertx, JWTAuthOptions().addPubSecKey(pubSecKeyRefresh))
 
         val appModules = listOf(module {
             single { vertx }
@@ -272,7 +267,7 @@ class RestApiVerticle : ZekoVerticle(), KoinComponent {
         //auth access token 60s, refresh token 300s, only allow refresh after token expired
         router.post("/user/refresh-token").handler(JWTAuthRefreshHandler(jwtAuth, jwtAuthRefresh, $jwtExpiry, $jwtRefreshExpiry, $jwtRefreshWhenExpire))
 
-        bindRoutes("$packageName.controller.GeneratedRoutes", router, logger)
+        bindRoutes("$packageName.controller.GeneratedRoutes", router, logger, true)
         handleRuntimeError(router, logger)
 
         //start running cron jobs
@@ -669,6 +664,10 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
         files.add(TempFile("$artifactId/build-docker-image.sh", buildDockerSh))
         files.add(TempFile("$artifactId/pom.xml", pom))
 
-        context.downloadZip(vertx, artifactId, files)
+        if (returnFiles)
+            return files
+        else
+            context.downloadZip(vertx, artifactId, files)
+        return null
     }
 }
