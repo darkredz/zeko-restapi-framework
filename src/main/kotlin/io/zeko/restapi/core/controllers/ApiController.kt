@@ -4,7 +4,7 @@ import io.vertx.core.Vertx
 import io.zeko.validation.Notification
 import io.zeko.validation.Validator
 import io.vertx.core.json.JsonObject
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.web.RoutingContext
 import java.lang.Double
 import java.lang.Float

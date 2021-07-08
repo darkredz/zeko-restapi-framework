@@ -6,7 +6,7 @@ package io.zeko.restapi.core.utilities.zip
 import io.vertx.core.*
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.logging.LoggerFactory
+import org.slf4j.LoggerFactory
 import io.vertx.core.streams.Pump
 import io.vertx.core.streams.ReadStream
 import io.vertx.ext.web.RoutingContext
@@ -22,7 +22,7 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
      * The current state.
      */
     @Volatile
-    private var state: Int = ZipGenerator.Companion.STATUS_ACTIVE
+    private var state: Int = STATUS_ACTIVE
 
     // Context in which we are executing
     private var context: Context? = null
@@ -52,7 +52,7 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
      */
     private fun doRead() {
         acquireContext()
-        if (state == ZipGenerator.Companion.STATUS_ACTIVE) {
+        if (state == STATUS_ACTIVE) {
             vertx.executeBlocking(Handler { promise: Promise<Any?> ->
                 // Flushing the pipe has to happen regulary to to
                 // block it
@@ -176,7 +176,7 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
     private fun doFlushPipe() {
         acquireContext()
         try {
-            if (state == ZipGenerator.Companion.STATUS_ACTIVE) {
+            if (state == STATUS_ACTIVE) {
                 if (pis.available() > 0) {
                     // Read all possible data from the pipe
                     val tmp = ByteArray(pis.available())
@@ -212,19 +212,19 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
     }
 
     private fun doCloseGenerator(handler: Handler<Void>?, e: Void?) {
-        state = ZipGenerator.Companion.STATUS_CLOSED
+        state = STATUS_CLOSED
         context!!.runOnContext { event: Void? ->
             handler?.handle(e)
         }
     }
 
     private fun handleError(cause: Throwable) {
-        state = ZipGenerator.Companion.STATUS_CLOSED
+        state = STATUS_CLOSED
         if (failureHandler != null) {
-            ZipGenerator.Companion.LOG.error(cause)
+            LOG.error(cause.toString())
             failureHandler!!.handle(cause)
         } else {
-            ZipGenerator.Companion.LOG.warn("No handler for error: $cause")
+            LOG.warn("No handler for error: $cause")
         }
     }
 
@@ -246,8 +246,8 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
      * @return the current `AsyncInputStream`
      */
     override fun pause(): ReadStream<Buffer>? {
-        if (state == ZipGenerator.Companion.STATUS_ACTIVE) {
-            state = ZipGenerator.Companion.STATUS_PAUSED
+        if (state == STATUS_ACTIVE) {
+            state = STATUS_PAUSED
         }
         return this
     }
@@ -259,9 +259,9 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
      */
     override fun resume(): ReadStream<Buffer>? {
         when (state) {
-            ZipGenerator.Companion.STATUS_CLOSED -> throw IllegalStateException("Cannot resume, already closed")
-            ZipGenerator.Companion.STATUS_PAUSED -> {
-                state = ZipGenerator.Companion.STATUS_ACTIVE
+            STATUS_CLOSED -> throw IllegalStateException("Cannot resume, already closed")
+            STATUS_PAUSED -> {
+                state = STATUS_ACTIVE
                 doRead()
             }
             else -> {

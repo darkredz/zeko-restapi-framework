@@ -3,7 +3,7 @@ package io.zeko.restapi.core.controllers
 import io.vertx.core.Vertx
 import io.zeko.restapi.annotation.http.*
 import io.zeko.restapi.annotation.Params
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.web.RoutingContext
 import io.zeko.db.sql.utilities.toCamelCase
 import io.zeko.db.sql.utilities.toSnakeCase
@@ -66,7 +66,7 @@ open class ProjectInitController(vertx: Vertx, logger: Logger, context: RoutingC
 package $packageName
 
 import io.vertx.core.Vertx
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
 import io.zeko.db.sql.connections.*
@@ -97,7 +97,7 @@ class DB {
         val clsAppDbLog = """
 package $packageName
 
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.zeko.db.sql.connections.DBLogLevel
 import io.zeko.db.sql.connections.DBLogger
 
@@ -180,7 +180,7 @@ import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.json.Json
-import io.vertx.core.logging.LoggerFactory
+import org.slf4j.LoggerFactory
 import io.vertx.ext.auth.PubSecKeyOptions
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.auth.jwt.JWTAuthOptions
@@ -199,22 +199,26 @@ class BootstrapVerticle : AbstractVerticle() {
     }
 
     override fun start() {
-        val logger = LoggerFactory.getLogger("app")
+        val logFactory = System.getProperty("org.vertx.logger-delegate-factory-class-name")
+        if (logFactory == null) {
+            System.setProperty("org.vertx.logger-delegate-factory-class-name", SLF4JLogDelegateFactory::class.java.name)
+        }
+        val logger = LoggerFactory.getLogger(BootstrapVerticle.javaClass")
         logger.info("STARTING APP...")
 
-        Json.mapper.registerModule(JavaTimeModule())
-        Json.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        Json.mapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+        DatabindCodec.mapper().registerModule(JavaTimeModule())
+        DatabindCodec.mapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+        DatabindCodec.mapper().propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
 
         //set JWT keys for auth
         val jwtAuthKeys = listOf(
-                PubSecKeyOptions().setAlgorithm("HS256").setPublicKey("$jwtKey").setSymmetric(true)
+                PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtKey")
         )
         val jwtOpt = JWTAuthOptions().setPubSecKeys(jwtAuthKeys)
         var jwtAuth = JWTAuth.create(vertx, jwtOpt)
 
         val jwtRefreshOpt = JWTAuthOptions().setPubSecKeys(listOf(
-                PubSecKeyOptions().setAlgorithm("HS256").setPublicKey("$jwtRefreshKey").setSymmetric(true)
+                PubSecKeyOptions().setAlgorithm("HS256").setBuffer("$jwtRefreshKey")
         ))
         var jwtAuthRefresh = JWTAuth.create(vertx, jwtRefreshOpt)
 
@@ -232,10 +236,7 @@ class BootstrapVerticle : AbstractVerticle() {
         Koin.logger = EmptyLogger()
 
         vertx.registerVerticleFactory(KoinVerticleFactory)
-        vertx.deployVerticle(
-                "${'$'}{KoinVerticleFactory.prefix()}:${'$'}{RestApiVerticle::class.java.canonicalName}",
-                DeploymentOptions().setInstances(1)
-        )
+        vertx.deployVerticle(RestApiVerticle::class.java.canonicalName, DeploymentOptions().setInstances(1))
     }
 }
         """.trimIndent()
@@ -243,7 +244,7 @@ class BootstrapVerticle : AbstractVerticle() {
         val clsRestApi = """
 package $packageName
 
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
@@ -302,7 +303,7 @@ import io.zeko.restapi.annotation.http.*
 import io.zeko.restapi.annotation.Params
 import io.zeko.restapi.core.controllers.ApiController
 import io.zeko.restapi.core.validations.ValidateResult
-import io.vertx.core.logging.Logger
+import org.slf4j.Logger
 import io.vertx.ext.web.RoutingContext
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -374,9 +375,9 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
 
     <properties>
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
-        <kotlin.version>1.4.10</kotlin.version>
-        <zeko-restapi.version>1.3.0</zeko-restapi.version>
-        <vertx.version>4.0..0</vertx.version>
+        <kotlin.version>1.5.10</kotlin.version>
+        <zeko-restapi.version>1.3.7</zeko-restapi.version>
+        <vertx.version>4.1.1</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
         <java.version>1.8</java.version>
         <jib.version>2.2.0</jib.version>
@@ -429,23 +430,23 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>1.3.3</version>
+            <version>1.3.9</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.10.0</version>
+            <version>2.11.4</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.10.0</version>
+            <version>2.11.4</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>2.10.2</version>
+            <version>2.10.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -463,6 +464,18 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
             <version>2.10.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.koin</groupId>
             <artifactId>koin-core</artifactId>
@@ -554,7 +567,7 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <version>${'$'}{kotlin.version}</version>
+                <version>1.4.10</version>
 
                 <executions>
                     <execution>

@@ -43,7 +43,7 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val
         authHandler: (User?, JsonObject) -> Unit
     ) {
 
-        jwtAuth.authenticate(json { obj("jwt" to accessToken) }) {
+        jwtAuth.authenticate(json { obj("jwt" to accessToken, "token" to accessToken) }) {
             var expired = false
 
             if (it.failed()) {
@@ -60,7 +60,7 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val
                 return@authenticate
             }
 
-            jwtAuthRefresh?.authenticate(json { obj("jwt" to refreshToken) }) {
+            jwtAuthRefresh?.authenticate(json { obj("jwt" to refreshToken, "token" to accessToken) }) {
                 if (it.failed()) {
                     val msg = it.cause().message + ""
 
@@ -96,7 +96,7 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val
         }
 
         var accessToken = authHeader.removePrefix("Bearer ")
-        val tokenData = json { obj("jwt" to accessToken) }
+        val tokenData = json { obj("jwt" to accessToken, "token" to accessToken) }
 
         jwtAuth.authenticate(tokenData) {
             if (it.failed()) {
