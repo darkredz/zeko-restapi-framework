@@ -304,7 +304,7 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
         const val STATUS_CLOSED = 2
 
         @JvmStatic
-        fun downloadZip(vertx: Vertx, context: RoutingContext, zipName: String, files: List<TempFile>) {
+        fun downloadZip(vertx: Vertx, context: RoutingContext, zipName: String, files: List<TempFile>, handler: Handler<Boolean>? = null) {
             val fileEntries = object : FileEntryIterator {
                 private var index = 0
                 override fun remove() {}
@@ -321,7 +321,9 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
 
             zip.endHandler {
                 context.response().end()
+                handler?.handle(true)
             }.exceptionHandler { err ->
+                handler?.handle(false)
                 throw err
             }
 

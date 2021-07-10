@@ -657,7 +657,6 @@ class RouteSchemaGenerator : AbstractProcessor() {
             var route = """
                     router.$httpMethod("$routePath").handler({ 
                         $className(vertx, logger, it).$methodName(it) 
-                        it.next()
                     })
                 """.trimIndent()
 
@@ -669,7 +668,6 @@ class RouteSchemaGenerator : AbstractProcessor() {
                             rc.put("inputRules", ${className}Schema.${methodName}Rules)
                             $className(vertx, logger, rc).$methodName(rc) 
                         }
-                        rc.next()
                     })
                 """.trimIndent()
                 } else {
@@ -677,7 +675,6 @@ class RouteSchemaGenerator : AbstractProcessor() {
                     router.$httpMethod("$routePath").handler({ 
                         it.put("inputRules", ${className}Schema.${methodName}Rules)
                         $className(vertx, logger, it).$methodName(it) 
-                        it.next()
                     })
                 """.trimIndent()
                 }
@@ -687,7 +684,6 @@ class RouteSchemaGenerator : AbstractProcessor() {
                         withContext(cc) {
                             $className(vertx, logger, rc).$methodName(rc) 
                         }
-                        rc.next()
                     })
                 """.trimIndent()
             }

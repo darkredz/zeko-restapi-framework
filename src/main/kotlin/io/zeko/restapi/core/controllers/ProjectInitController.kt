@@ -163,8 +163,8 @@ import org.koin.standalone.get
 object KoinVerticleFactory : VerticleFactory, KoinComponent {
     override fun prefix(): String = "koin"
 
-    override fun createVerticle(verticleName: String, classLoader: ClassLoader): Verticle {
-        return get(clazz = Class.forName(verticleName.substringAfter("koin:")).kotlin)
+    override fun createVerticle(verticleName: String, classLoader: ClassLoader, promise: Promise<Callable<Verticle>>) {
+        promise.complete(get(clazz = Class.forName(verticleName.substringAfter("koin:")).kotlin))
     }
 }
         """.trimIndent()
@@ -188,6 +188,10 @@ import org.koin.core.Koin
 import org.koin.dsl.module.module
 import org.koin.log.EmptyLogger
 import org.koin.standalone.StandAloneContext
+import io.vertx.core.logging.SLF4JLogDelegateFactory
+import io.vertx.core.json.jackson.DatabindCodec
+import org.koin.log.Logger.SLF4JLogger
+import org.koin.core.KoinProperties
 
 class BootstrapVerticle : AbstractVerticle() {
     companion object {
@@ -203,7 +207,7 @@ class BootstrapVerticle : AbstractVerticle() {
         if (logFactory == null) {
             System.setProperty("org.vertx.logger-delegate-factory-class-name", SLF4JLogDelegateFactory::class.java.name)
         }
-        val logger = LoggerFactory.getLogger(BootstrapVerticle.javaClass")
+        val logger = LoggerFactory.getLogger(BootstrapVerticle.javaClass)
         logger.info("STARTING APP...")
 
         DatabindCodec.mapper().registerModule(JavaTimeModule())
@@ -227,8 +231,7 @@ class BootstrapVerticle : AbstractVerticle() {
         })
 
         StandAloneContext.stopKoin()
-        StandAloneContext.startKoin(appModules)
-        Koin.logger = EmptyLogger()
+        StandAloneContext.startKoin(appModules, KoinProperties(), SLF4JLogger())
 
         vertx.registerVerticleFactory(KoinVerticleFactory)
         vertx.deployVerticle(RestApiVerticle::class.java.canonicalName, DeploymentOptions().setInstances(1))
@@ -371,16 +374,16 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
     <properties>
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
         <kotlin.version>1.5.10</kotlin.version>
-        <zeko-restapi.version>1.3.7</zeko-restapi.version>
+        <zeko-restapi.version>1.3.9</zeko-restapi.version>
         <vertx.version>4.1.1</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <jib.version>2.2.0</jib.version>
 
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
 
         <junit-jupiter.version>5.2.0</junit-jupiter.version>
         <junit-platform-surefire-provider.version>1.2.0</junit-platform-surefire-provider.version>
@@ -474,6 +477,12 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
         <dependency>
             <groupId>org.koin</groupId>
             <artifactId>koin-core</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.koin</groupId>
+            <artifactId>koin-logger-slf4j</artifactId>
             <version>1.0.2</version>
         </dependency>
 
