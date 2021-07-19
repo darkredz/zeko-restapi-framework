@@ -97,7 +97,7 @@ open abstract class ApiController(
     }
 
     override fun outputError(validateResult: ValidateResult, statusCode: Int, errorCode: Int) {
-        val res = JsonObject().put("error_code", errorCode).put("errors", JsonObject(validateResult.errors))
+        val res = JsonObject().put(getJsonKey("error_code"), errorCode).put("errors", JsonObject(validateResult.errors))
         if (params!!["_debug"] == "true") {
             res.put("values", JsonObject(validateResult.values))
         }
