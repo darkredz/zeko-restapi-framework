@@ -27,7 +27,7 @@ open abstract class ApiController(
 
     init {
         val entries = context.request().params().entries()
-        params = entries.associate { Pair(it.key, it.value) }
+        params = entries.associate { Pair(it.key, it.value.toString().trim()) }
         if (context.get<Boolean>("useCamelCaseResponse")) {
             useCamelCaseResponse = true
         }
