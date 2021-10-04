@@ -89,7 +89,7 @@ class ValidationError {
             "timeBeforeMinute" to "__ must be before minute %s",
             "timeEqMinute" to "__ must be same minute as %s",
             "dateFormat" to "__ must be valid date time format %s",
-            "dateTimeFormat" to "__ must be a valid time format and between %s and %s",
+            "dateTimeFormat" to "__ must be a valid time format",
             "dateTimeBetween" to "__ must be a valid date time format and between %s and %s",
             "dateTimeAfter" to "__ must be after date time %s",
             "dateTimeBefore" to "__ must be before date time %s",
