@@ -21,7 +21,7 @@ This library is open source and available under the Apache 2.0 license. Please l
 
 ## Features
 - No configuration files, no XML or YAML, lightweight, easy to use
-- Event driven & non-blocking built on top of [Vert.x 3.9.2](https://vertx.io) 
+- Event driven & non-blocking built on top of [Vert.x 4.1.1](https://vertx.io) 
 - Fast startup & performance
 - Supports Kotlin coroutines
 - Automatic Swagger/OpenAPI doc generation for your RESTful API
@@ -47,7 +47,7 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.4.3</version>
+      <version>1.5.0</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
