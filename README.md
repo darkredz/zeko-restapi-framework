@@ -47,19 +47,19 @@ Add this to your maven pom.xml
     <dependency>
       <groupId>io.zeko</groupId>
       <artifactId>zeko-restapi</artifactId>
-      <version>1.5.0</version>
+      <version>1.5.2</version>
     </dependency>
     <!-- Jasync Mysql driver if needed -->
     <dependency>
        <groupId>com.github.jasync-sql</groupId>
        <artifactId>jasync-mysql</artifactId>
-       <version>1.1.5</version>
+       <version>1.2.3</version>
     </dependency>
     <!-- Hikari Mysql connection pool if needed -->
     <dependency>
         <groupId>com.zaxxer</groupId>
         <artifactId>HikariCP</artifactId>
-        <version>3.4.3</version>
+        <version>5.0.1</version>
     </dependency>
     <!-- Vertx jdbc client if needed -->
     <dependency>
