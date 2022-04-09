@@ -314,13 +314,13 @@ class ${name}Controller : KoinComponent, ApiController {
         return super.validateInput(422)
     }
 
-//    @GetSuspend("/check/:user_id", "Check this out")
-//    @Params(["user_id => required, isInteger, min;1, max;99999999"])
-//    suspend fun checThisOut(ctx: RoutingContext) {
+//    @GetSuspend("/check/:userId", "Check this out")
+//    @Params(["userId => required, isInteger, min;1, max;99999999"])
+//    suspend fun checkThisOut(ctx: RoutingContext) {
 //        val res = validateInput()
 //        if (!res.success) return
 //
-//        val uid = res.values["user_id"].toString().toInt()
+//        val uid = res.values["userId"].toString().toInt()
 //        val user = userService.getById(uid)
 //        endJson(user)
 //    }
@@ -374,7 +374,7 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
     <properties>
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
         <kotlin.version>1.6.20</kotlin.version>
-        <zeko-restapi.version>1.5.2</zeko-restapi.version>
+        <zeko-restapi.version>1.5.3</zeko-restapi.version>
         <vertx.version>4.1.1</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
         <java.version>11</java.version>

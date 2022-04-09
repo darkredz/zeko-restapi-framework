@@ -205,7 +205,7 @@
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>kotlinpoet</artifactId>
-            <version>1.4.4</version>
+            <version>1.11.0</version>
         </dependency>
 
         <dependency>
