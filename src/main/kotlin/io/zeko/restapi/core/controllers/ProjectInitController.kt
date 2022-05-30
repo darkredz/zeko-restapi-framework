@@ -270,11 +270,11 @@ class RestApiVerticle : ZekoVerticle(), KoinComponent {
         //auth access token 60s, refresh token 300s, only allow refresh after token expired
         router.post("/user/refresh-token").handler(JWTAuthRefreshHandler(jwtAuth, jwtAuthRefresh, $jwtExpiry, $jwtRefreshExpiry, $jwtRefreshWhenExpire))
 
-        bindRoutes("$packageName.controller.GeneratedRoutes", router, logger, true)
+        bindRoutes($packageName.controller.GeneratedRoutes, router, logger, true)
         handleRuntimeError(router, logger)
 
         //start running cron jobs
-        //startCronJobs("$packageName.job.GeneratedCrons", logger)
+        //startCronJobs($packageName.job.GeneratedCrons, logger)
 
         vertx.createHttpServer()
                 .requestHandler(router)
@@ -375,7 +375,7 @@ mvn clean compile vertx:run -Dvertx.verticle="$packageName.BootstrapVerticle" \
         <vertx.verticle>$packageName.BootstrapVerticle</vertx.verticle>
         <kotlin.version>1.6.20</kotlin.version>
         <zeko-restapi.version>1.5.4</zeko-restapi.version>
-        <vertx.version>4.1.1</vertx.version>
+        <vertx.version>4.1.8</vertx.version>
         <micrometer.version>1.1.0</micrometer.version>
         <java.version>11</java.version>
         <jib.version>2.2.0</jib.version>
