@@ -19,11 +19,16 @@ suspend fun Vertx.runCronSuspend(scheduleBlock: () -> Long, block: suspend () ->
     val vertx = this
     val duration = scheduleBlock()
 
-    vertx.setTimer(duration) {
-        GlobalScope.launch(vertx.dispatcher()) {
-            vertx.runCronSuspend(scheduleBlock, block)
-            block.invoke()
+    if (duration > 0) {
+        vertx.setTimer(duration) {
+            GlobalScope.launch(vertx.dispatcher()) {
+                vertx.runCronSuspend(scheduleBlock, block)
+                block.invoke()
+            }
         }
+    } else {
+        vertx.runCronSuspend(scheduleBlock, block)
+        block.invoke()
     }
 }
 
@@ -31,7 +36,12 @@ fun Vertx.runCron(scheduleBlock: () -> Long, block: () -> Any) {
     val vertx = this
     val duration = scheduleBlock()
 
-    vertx.setTimer(duration) {
+    if (duration > 0) {
+        vertx.setTimer(duration) {
+            vertx.runCron(scheduleBlock, block)
+            block.invoke()
+        }
+    } else {
         vertx.runCron(scheduleBlock, block)
         block.invoke()
     }
