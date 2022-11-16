@@ -60,7 +60,7 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val
                 return@authenticate
             }
 
-            jwtAuthRefresh?.authenticate(json { obj("jwt" to refreshToken, "token" to accessToken) }) {
+            jwtAuthRefresh?.authenticate(json { obj("jwt" to refreshToken, "token" to refreshToken) }) {
                 if (it.failed()) {
                     val msg = it.cause().message + ""
 
