@@ -64,7 +64,7 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val
                 if (it.failed()) {
                     val msg = it.cause().message + ""
 
-                    if (msg.indexOf("Expired") > -1) {
+                    if (msg.lowercase().indexOf("expired") > -1) {
                         authHandler(null, expireMsg)
                     } else {
                         authHandler(null, invalidMsg)
