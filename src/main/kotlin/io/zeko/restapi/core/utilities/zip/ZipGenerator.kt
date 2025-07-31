@@ -7,7 +7,6 @@ import io.vertx.core.*
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpHeaders
 import org.slf4j.LoggerFactory
-import io.vertx.core.streams.Pump
 import io.vertx.core.streams.ReadStream
 import io.vertx.ext.web.RoutingContext
 import java.io.IOException
@@ -53,15 +52,14 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
     private fun doRead() {
         acquireContext()
         if (state == STATUS_ACTIVE) {
-            vertx.executeBlocking(Handler { promise: Promise<Any?> ->
-                // Flushing the pipe has to happen regulary to to
-                // block it
+            vertx.executeBlocking<Any?>({
+                // Flushing the pipe has to happen regularly to not block it
                 next(Runnable { doFlushPipe() })
 
                 // We start by reading the first file
                 next(Runnable { doReadFile() })
-                promise.complete()
-            }, noop())
+                null // No result to return
+            })
         }
     }
 
@@ -84,25 +82,19 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
     }
 
     private fun doCloseAndStop() {
-        vertx.executeBlocking({ v: Promise<Any?> ->
+         vertx.executeBlocking<Any?>({
             try {
                 doFlushPipe()
                 zos.close()
-                v.complete()
-            } catch (e: IOException) {
-                v.fail(e)
-            }
-        }) { v: AsyncResult<Any?> ->
-            if (v.succeeded()) {
                 doCloseGenerator(closeHandler)
-            } else {
-                handleError(v.cause())
+            } catch (e: IOException) {
+                handleError(e)
             }
-        }
+        })
     }
 
     private fun readFile(entry: FileEntry, handler: Handler<AsyncResult<Void?>>) {
-        vertx.executeBlocking(Handler { promise: Promise<Any?>? ->
+        vertx.executeBlocking<Any?>({
             try {
                 // Open the inputstream if needed
                 if (fileEntryIS == null) {
@@ -113,7 +105,7 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
             } catch (e: IOException) {
                 handler.handle(Future.failedFuture(e))
             }
-        }, noop())
+        })
     }
 
     /**
@@ -327,11 +319,12 @@ class ZipGenerator(private val vertx: Vertx, source: FileEntryIterator) : ReadSt
                 throw err
             }
 
-            context.response()
+            val response = context.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, "application/zip, application/octet-stream")
                 .putHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"$zipName.zip\"")
+                .setChunked(true)
 
-            Pump.pump(zip, context.response().setChunked(true)).start()
+            zip.pipeTo(response)
         }
     }
 

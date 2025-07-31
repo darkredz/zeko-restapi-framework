@@ -1,12 +1,11 @@
 package io.zeko.restapi.core.verticles
 
+import io.vertx.core.Deployable
 import io.vertx.core.json.JsonObject
 import org.slf4j.Logger
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
-import io.vertx.kotlin.core.json.json
-import io.vertx.kotlin.core.json.obj
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.dispatcher
 import io.zeko.restapi.core.RouteSchema
@@ -17,6 +16,8 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.time.ZonedDateTime
 import kotlin.coroutines.CoroutineContext
+import io.vertx.kotlin.core.json.json
+import io.vertx.kotlin.core.json.obj
 
 open abstract class ZekoVerticle : CoroutineVerticle() {
     fun Route.koto(fn: suspend (RoutingContext) -> Unit) {
@@ -184,7 +185,7 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
                 "sec" to nowMs,
                 "ip" to it.request().remoteAddress().host(),
                 "request" to obj(
-                    "host" to it.request().host(),
+                    "host" to it.request().authority().host(),
                     "method" to it.request().method().name(),
                     "url" to it.normalizedPath(),
                     "path_params" to it.pathParams(),
