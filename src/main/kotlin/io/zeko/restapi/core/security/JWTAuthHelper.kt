@@ -6,11 +6,8 @@ import io.vertx.ext.auth.User
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.auth.jwt.JWTAuthOptions
 import io.vertx.ext.auth.JWTOptions
-import io.vertx.ext.auth.authentication.Credentials
-import io.vertx.ext.auth.authentication.TokenCredentials
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
-import io.vertx.kotlin.coroutines.coAwait
 import io.zeko.db.sql.utilities.toCamelCase
 
 open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val useCamelCase: Boolean = false) {
@@ -37,7 +34,7 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val
         }
     }
 
-    suspend fun refreshToken(
+    fun refreshToken(
         refreshToken: String,
         accessToken: String,
         tokenExpireSeconds: Int = 259200,
@@ -45,67 +42,75 @@ open class JWTAuthHelper(val jwtAuth: JWTAuth, val jwtAuthRefresh: JWTAuth?, val
         refreshAfterExpired: Boolean = false,
         authHandler: (User?, JsonObject) -> Unit
     ) {
-        try {
-            jwtAuth.authenticate(TokenCredentials(accessToken)).coAwait()
-        } catch (e: Exception) {
-            val msg = e.message + ""
-            val expired = msg.toLowerCase().indexOf("expired") > -1
-            if (!expired) {
+
+        jwtAuth.authenticate(json { obj("jwt" to accessToken, "token" to accessToken) }) {
+            var expired = false
+
+            if (it.failed()) {
+                val msg = it.cause().message + ""
+                expired = msg.indexOf("Expired") > -1
+                if (!expired) {
+                    authHandler(null, invalidMsg)
+                    return@authenticate
+                }
+            }
+
+            if (refreshAfterExpired && !expired) {
                 authHandler(null, invalidMsg)
-                return
+                return@authenticate
             }
 
-            if (!refreshAfterExpired || jwtAuthRefresh == null) {
-                authHandler(null, expireMsg)
-                return
-            }
+            jwtAuthRefresh?.authenticate(json { obj("jwt" to refreshToken, "token" to refreshToken) }) {
+                if (it.failed()) {
+                    val msg = it.cause().message + ""
 
-            try {
-                val authUser = jwtAuthRefresh.authenticate(TokenCredentials(refreshToken)).coAwait()
-                val user = authUser.principal().map
+                    if (msg.lowercase().indexOf("expired") > -1) {
+                        authHandler(null, expireMsg)
+                    } else {
+                        authHandler(null, invalidMsg)
+                    }
+                } else {
+                    val authUser = it.result() as User
+                    val user = authUser.principal().map
 
-                if (accessToken.isEmpty()) {
-                    authHandler(null, invalidMsg)
-                } else if (user.containsKey(getJsonKey("for_token")) && user[getJsonKey("for_token")] == accessToken) {
-                    user.remove(getJsonKey("for_token"))
-                    authHandler(
-                        authUser,
-                        JsonObject(generateAuthTokens(JsonObject(user), tokenExpireSeconds, refreshExpireSeconds))
-                    )
-                } else {
-                    authHandler(null, invalidMsg)
+                    if (accessToken.isNullOrEmpty()) {
+                        authHandler(null, invalidMsg)
+                    } else if (user.containsKey(getJsonKey("for_token")) && user[getJsonKey("for_token")] == accessToken) {
+                        user.remove(getJsonKey("for_token"))
+                        authHandler(
+                            authUser,
+                            JsonObject(generateAuthTokens(JsonObject(user), tokenExpireSeconds, refreshExpireSeconds))
+                        )
+                    } else {
+                        authHandler(null, invalidMsg)
+                    }
                 }
-            } catch (refreshErr: Exception) {
-                val refreshErrMeg = e.message + ""
-                if (refreshErrMeg.toLowerCase().indexOf("expired") > -1) {
-                    authHandler(null, expireMsg)
-                } else {
-                    authHandler(null, invalidMsg)
-                }
-                return
             }
         }
     }
 
-    suspend fun validateToken(authHeader: String?, authHandler: (User?, JsonObject) -> Unit) {
+    fun validateToken(authHeader: String?, authHandler: (User?, JsonObject) -> Unit) {
         if (authHeader.isNullOrEmpty()) {
             authHandler(null, invalidMsg)
             return
         }
 
-        val accessToken = authHeader.removePrefix("Bearer ")
+        var accessToken = authHeader.removePrefix("Bearer ")
+        val tokenData = json { obj("jwt" to accessToken, "token" to accessToken) }
 
-        try {
-            val user = jwtAuth.authenticate(TokenCredentials(accessToken)).coAwait()
-            authHandler(user, user.principal())
-        } catch (e: Exception) {
-            val msg = e.message + ""
-            if (msg.indexOf("Expired") > -1) {
-                authHandler(null, expireMsg)
+        jwtAuth.authenticate(tokenData) {
+            if (it.failed()) {
+                val msg = it.cause().message + ""
+
+                if (msg.indexOf("Expired") > -1) {
+                    authHandler(null, expireMsg)
+                } else {
+                    authHandler(null, invalidMsg)
+                }
             } else {
-                authHandler(null, invalidMsg)
+                val user = it.result() as User
+                authHandler(user, user.principal())
             }
-            return
         }
     }
 

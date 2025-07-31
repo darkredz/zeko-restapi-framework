@@ -2,12 +2,10 @@ package io.zeko.restapi.core.security
 
 import io.vertx.core.Handler
 import io.vertx.core.http.HttpHeaders
-import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.RoutingContext
-import io.vertx.kotlin.coroutines.dispatcher
+import io.vertx.ext.auth.jwt.JWTAuth
+import io.zeko.restapi.core.security.JWTAuthHelper
 import io.zeko.restapi.core.utilities.endJson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 open class JWTAuthHandler(
     protected val jwtAuth: JWTAuth,
@@ -16,6 +14,7 @@ open class JWTAuthHandler(
     protected val statusFail: Int = 401,
     protected val useCamelCase: Boolean = false
 ) : Handler<RoutingContext> {
+
     override fun handle(ctx: RoutingContext) {
         var skip = false
         if (this.skipAuth != null) {
@@ -44,22 +43,20 @@ open class JWTAuthHandler(
         }
 
         if (!skip) {
-            val authHeader = ctx.request().getHeader(HttpHeaders.AUTHORIZATION.toString())
+            var authHeader = ctx.request().getHeader(HttpHeaders.AUTHORIZATION.toString())
             val helper = JWTAuthHelper(jwtAuth, null, useCamelCase)
 
-            CoroutineScope(ctx.vertx().dispatcher()).launch {
-                helper.validateToken(authHeader) { user, result ->
-                    if (user == null) {
-                        if (continueAfterFail) {
-                            ctx.put("tokenStatus", result)
-                            ctx.next()
-                        } else {
-                            ctx.endJson(result, statusFail)
-                        }
-                    } else {
-                        ctx.put("user", user)
+            helper.validateToken(authHeader) { user, result ->
+                if (user == null) {
+                    if (continueAfterFail) {
+                        ctx.put("tokenStatus", result)
                         ctx.next()
+                    } else {
+                        ctx.endJson(result, statusFail)
                     }
+                } else {
+                    ctx.setUser(user)
+                    ctx.next()
                 }
             }
         }

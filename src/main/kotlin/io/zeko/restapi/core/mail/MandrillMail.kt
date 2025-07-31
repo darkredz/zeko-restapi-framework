@@ -3,11 +3,11 @@ package io.zeko.restapi.core.mail
 import io.vertx.circuitbreaker.CircuitBreaker
 import io.vertx.circuitbreaker.CircuitBreakerOptions
 import io.vertx.core.Vertx
-import io.vertx.core.http.PoolOptions
 import io.vertx.core.json.JsonObject
 import org.slf4j.Logger
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
+import io.vertx.kotlin.coroutines.await
 import io.zeko.restapi.core.CircuitBreakerBuilder
 import io.zeko.restapi.core.utilities.executeSuspendAwait
 import kotlinx.coroutines.*
@@ -23,22 +23,20 @@ class MandrillMail(
 
     companion object {
         @JvmStatic
-        fun createSharedClient(vertx: Vertx, options: WebClientOptions? = null, poolOptions: PoolOptions? = null): WebClient {
-            val resolvedWebClientOptions = options ?: WebClientOptions()
-                .setDefaultHost("mandrillapp.com")
-                .setSsl(true)
-                .setDefaultPort(443)
-                .setIdleTimeout(15000)
-                .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
-                .setConnectTimeout(30000)
-                .setLogActivity(false)
-
-            val resolvedPoolOptions = poolOptions ?: PoolOptions()
-                .setHttp1MaxSize(30)
-                .setHttp2MaxSize(5)
+        fun createSharedClient(vertx: Vertx, options: WebClientOptions? = null): WebClient {
+            if (options != null)
+                return WebClient.create(vertx, options)
 
             return WebClient.create(
-                vertx, resolvedWebClientOptions, resolvedPoolOptions
+                vertx, WebClientOptions()
+                    .setMaxPoolSize(15)
+                    .setDefaultHost("mandrillapp.com")
+                    .setSsl(true)
+                    .setDefaultPort(443)
+                    .setIdleTimeout(15000)
+                    .setIdleTimeoutUnit(TimeUnit.MILLISECONDS)
+                    .setConnectTimeout(30000)
+                    .setLogActivity(false)
             )
         }
 

@@ -4,10 +4,7 @@ import io.vertx.core.Handler
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.auth.jwt.JWTAuth
-import io.vertx.kotlin.coroutines.dispatcher
 import io.zeko.restapi.core.utilities.endJson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 open class JWTAuthRefreshHandler(
     protected val jwtAuth: JWTAuth,
@@ -28,21 +25,20 @@ open class JWTAuthRefreshHandler(
         }
 
         val refreshTokenKey = if (useCamelCase) "refreshToken" else "refresh_token"
-        val refreshToken = ctx.request().params().get(refreshTokenKey) + ""
+        var refreshToken = ctx.request().params().get(refreshTokenKey) + ""
         val helper = JWTAuthHelper(jwtAuth, jwtAuthRefresh, useCamelCase)
 
-        CoroutineScope(ctx.vertx().dispatcher()).launch {
-            helper.refreshToken(
-                refreshToken, accessToken, tokenExpireSeconds,
-                refreshExpireSeconds, refreshAfterExpired
-            ) { user, result ->
-                if (user == null) {
-                    ctx.response().statusCode = 401
-                    ctx.endJson(result, 401)
-                } else {
-                    ctx.endJson(result)
-                }
+        helper.refreshToken(
+            refreshToken, accessToken, tokenExpireSeconds,
+            refreshExpireSeconds, refreshAfterExpired
+        ) { user, result ->
+            if (user == null) {
+                ctx.response().statusCode = 401
+                ctx.endJson(result)
+            } else {
+                ctx.endJson(result)
             }
         }
     }
+
 }
