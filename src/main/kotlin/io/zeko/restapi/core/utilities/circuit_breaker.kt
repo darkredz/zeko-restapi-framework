@@ -1,11 +1,8 @@
 package io.zeko.restapi.core.utilities
 
 import io.vertx.circuitbreaker.CircuitBreaker
-import io.vertx.circuitbreaker.CircuitBreakerOptions
 import io.vertx.core.Promise
-import io.vertx.core.Vertx
-import io.vertx.kotlin.circuitbreaker.executeAwait
-import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.coAwait
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -23,7 +20,7 @@ suspend fun <T> CircuitBreaker.executeSuspendAwait(block: suspend (Promise<T>) -
                     promise.complete(it)
                 }
             }
-        }.await()
+        }.coAwait()
         future
     }
 }
