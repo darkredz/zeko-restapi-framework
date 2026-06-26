@@ -185,7 +185,7 @@ open abstract class ZekoVerticle : CoroutineVerticle() {
                 "sec" to nowMs,
                 "ip" to it.request().remoteAddress().host(),
                 "request" to obj(
-                    "host" to it.request().authority().host(),
+                    "host" to it.request().authority()?.host(),
                     "method" to it.request().method().name(),
                     "url" to it.normalizedPath(),
                     "path_params" to it.pathParams(),
